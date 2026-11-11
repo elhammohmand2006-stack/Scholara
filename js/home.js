@@ -1,319 +1,397 @@
 // home page script (only this page's owner edits this file)
 
-/* ===================================
-   STUDYHUB - JAVASCRIPT
-=================================== */
+
+/* =====================================
+   SCHOLARA HOME JAVASCRIPT
+===================================== */
 
 
-/* ===================================
+/* =====================================
    1. SELECT HTML ELEMENTS
-=================================== */
+===================================== */
 
 const loginTab = document.getElementById("loginTab");
+
 const signupTab = document.getElementById("signupTab");
 
 const authForm = document.getElementById("authForm");
 
-const authTitle = document.getElementById("authTitle");
-const authSubtitle = document.getElementById("authSubtitle");
-const submitButton = document.getElementById("submitButton");
+const fullName = document.getElementById("fullName");
+
+const email = document.getElementById("email");
+
+const password = document.getElementById("password");
 
 const nameGroup = document.getElementById("nameGroup");
-const rememberRow = document.getElementById("rememberRow");
 
-const fullName = document.getElementById("fullName");
-const email = document.getElementById("email");
-const password = document.getElementById("password");
+const formTitle = document.getElementById("formTitle");
+
+const formDescription = document.getElementById("formDescription");
+
+const submitButton = document.getElementById("submitButton");
 
 const authMessage = document.getElementById("authMessage");
 
-const navUsername = document.getElementById("navUsername");
-const userAvatar = document.getElementById("userAvatar");
+const rememberRow = document.getElementById("rememberRow");
 
 
-/* ===================================
-   2. AUTHENTICATION MODE
-=================================== */
+/* =====================================
+   2. LOGIN AND SIGNUP
+===================================== */
 
-// Current mode: login or signup
+// Default mode is Login
 
 let currentMode = "login";
 
 
-// Switch between Login and Signup
+// Function to change form mode
 
-function switchMode(mode) {
+function changeMode(mode) {
 
     currentMode = mode;
 
-    authMessage.textContent = "";
-    authMessage.className = "auth-message";
+    authForm.reset();
 
     clearErrors();
 
+    authMessage.textContent = "";
+
     if (mode === "signup") {
 
-        loginTab.classList.remove("active");
+        // Show Signup
+
         signupTab.classList.add("active");
 
+        loginTab.classList.remove("active");
+
         nameGroup.hidden = false;
+
         rememberRow.hidden = true;
 
-        authTitle.textContent = "Create Account";
+        formTitle.textContent = "Create Account";
 
-        authSubtitle.textContent =
-            "Join StudyHub and start learning";
-
-        submitButton.innerHTML =
-            'Sign Up <span>→</span>';
-
-        fullName.required = true;
-        password.autocomplete = "new-password";
-
-    } else {
-
-        signupTab.classList.remove("active");
-        loginTab.classList.add("active");
-
-        nameGroup.hidden = true;
-        rememberRow.hidden = false;
-
-        authTitle.textContent = "Welcome Back!";
-
-        authSubtitle.textContent =
-            "Sign in to continue your journey";
+        formDescription.textContent =
+            "Create your account and start learning.";
 
         submitButton.innerHTML =
-            'Login <span>→</span>';
+            'Sign Up <i class="ri-arrow-right-line"></i>';
 
-        fullName.required = false;
-        password.autocomplete = "current-password";
     }
 
-    authForm.reset();
+    else {
+
+        // Show Login
+
+        loginTab.classList.add("active");
+
+        signupTab.classList.remove("active");
+
+        nameGroup.hidden = true;
+
+        rememberRow.hidden = false;
+
+        formTitle.textContent = "Welcome Back";
+
+        formDescription.textContent =
+            "Sign in to continue your journey.";
+
+        submitButton.innerHTML =
+            'Login <i class="ri-arrow-right-line"></i>';
+
+    }
+
 }
 
 
-// Tab click events
+// Login button event
 
-loginTab.addEventListener("click", function () {
-    switchMode("login");
+loginTab.addEventListener("click", function() {
+
+    changeMode("login");
+
 });
 
-signupTab.addEventListener("click", function () {
-    switchMode("signup");
+
+// Signup button event
+
+signupTab.addEventListener("click", function() {
+
+    changeMode("signup");
+
 });
 
 
-/* ===================================
+/* =====================================
    3. FORM VALIDATION
-=================================== */
+===================================== */
 
-function showError(input, errorId, message) {
 
-    const errorElement = document.getElementById(errorId);
+// Show error message
 
-    errorElement.textContent = message;
+function showError(input, message) {
 
-    input.classList.add("invalid");
-    input.classList.remove("valid");
+    const group = input.closest(".form-group");
+
+    const error = group.querySelector("small");
+
+    const box = group.querySelector(".input-box");
+
+    error.textContent = message;
+
+    box.classList.add("invalid");
+
+    box.classList.remove("valid");
+
 }
 
 
-function showSuccess(input, errorId) {
+// Show success style
 
-    const errorElement = document.getElementById(errorId);
+function showSuccess(input) {
 
-    errorElement.textContent = "";
+    const group = input.closest(".form-group");
 
-    input.classList.remove("invalid");
-    input.classList.add("valid");
+    const error = group.querySelector("small");
+
+    const box = group.querySelector(".input-box");
+
+    error.textContent = "";
+
+    box.classList.remove("invalid");
+
+    box.classList.add("valid");
+
 }
 
+
+// Clear all errors
 
 function clearErrors() {
 
-    const inputs = [
-        fullName,
-        email,
-        password
-    ];
+    document.querySelectorAll(".form-group").forEach(function(group) {
 
-    const errors = [
-        "nameError",
-        "emailError",
-        "passwordError"
-    ];
+        const error = group.querySelector("small");
 
-    inputs.forEach(function(input, index) {
+        const box = group.querySelector(".input-box");
 
-        input.classList.remove("invalid", "valid");
+        error.textContent = "";
 
-        document.getElementById(errors[index]).textContent = "";
+        box.classList.remove("invalid", "valid");
 
     });
+
 }
 
 
-// Validate full name
+// Validate Name
 
 function validateName() {
 
-    const nameValue = fullName.value.trim();
+    const value = fullName.value.trim();
 
-    if (nameValue.length < 3) {
+    if (value.length < 3) {
 
         showError(
             fullName,
-            "nameError",
-            "Name must contain at least 3 characters."
+            "Name must have at least 3 characters."
         );
 
         return false;
+
     }
 
-    showSuccess(fullName, "nameError");
+    showSuccess(fullName);
 
     return true;
+
 }
 
 
-// Validate email
+// Validate Email
 
 function validateEmail() {
 
-    const emailValue = email.value.trim();
+    const value = email.value.trim();
 
     const emailPattern =
         /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!emailPattern.test(emailValue)) {
+    if (!emailPattern.test(value)) {
 
         showError(
             email,
-            "emailError",
             "Please enter a valid email address."
         );
 
         return false;
+
     }
 
-    showSuccess(email, "emailError");
+    showSuccess(email);
 
     return true;
+
 }
 
 
-// Validate password
+// Validate Password
 
 function validatePassword() {
 
-    const passwordValue = password.value;
+    const value = password.value;
 
-    if (passwordValue.length < 6) {
+    if (value.length < 6) {
 
         showError(
             password,
-            "passwordError",
-            "Password must contain at least 6 characters."
+            "Password must have at least 6 characters."
         );
 
         return false;
+
     }
 
-    showSuccess(password, "passwordError");
+    showSuccess(password);
 
     return true;
+
 }
 
 
-// Live validation events
+/* =====================================
+   4. LIVE VALIDATION
+===================================== */
+
+// Check name while typing
 
 fullName.addEventListener("input", function() {
 
     if (currentMode === "signup") {
+
         validateName();
+
     }
 
 });
 
-email.addEventListener("input", validateEmail);
 
-password.addEventListener("input", validatePassword);
+// Check email while typing
+
+email.addEventListener("input", function() {
+
+    validateEmail();
+
+});
 
 
-/* ===================================
-   4. SHOW / HIDE PASSWORD
-=================================== */
+// Check password while typing
+
+password.addEventListener("input", function() {
+
+    validatePassword();
+
+});
+
+
+/* =====================================
+   5. SHOW AND HIDE PASSWORD
+===================================== */
 
 const togglePassword =
     document.getElementById("togglePassword");
 
+
 togglePassword.addEventListener("click", function() {
+
+    const icon = togglePassword.querySelector("i");
 
     if (password.type === "password") {
 
         password.type = "text";
 
-        togglePassword.textContent = "🙈";
+        icon.className = "ri-eye-line";
 
-    } else {
+    }
+
+    else {
 
         password.type = "password";
 
-        togglePassword.textContent = "👁";
+        icon.className = "ri-eye-off-line";
+
     }
 
 });
 
 
-/* ===================================
-   5. SIGN UP AND LOGIN
-=================================== */
+/* =====================================
+   6. LOCAL STORAGE
+===================================== */
 
-// Demo account storage
+// Get saved user
 
-function getSavedUser() {
+function getUser() {
 
     return JSON.parse(
-        localStorage.getItem("studyHubUser")
-    ) || null;
-
-}
-
-
-function saveUser(user) {
-
-    localStorage.setItem(
-        "studyHubUser",
-        JSON.stringify(user)
+        localStorage.getItem("scholaraUser")
     );
 
 }
 
 
-// Update Navbar after login
+// Show message
 
-function updateNavbar(user) {
+function showMessage(message, type) {
 
-    navUsername.textContent = user.name;
+    authMessage.textContent = message;
 
-    userAvatar.textContent =
-        user.name.charAt(0).toUpperCase();
+    authMessage.className = type;
 
 }
 
 
-// Form Submit Event
+/* =====================================
+   7. UPDATE USER NAME
+===================================== */
+
+function showUser(user) {
+
+    document.getElementById("welcomeUser").hidden = false;
+
+    document.getElementById("userName").textContent =
+        user.name;
+
+}
+
+
+// Hide user name
+
+function hideUser() {
+
+    document.getElementById("welcomeUser").hidden = true;
+
+}
+
+
+/* =====================================
+   8. SIGNUP AND LOGIN
+===================================== */
 
 authForm.addEventListener("submit", function(event) {
 
     event.preventDefault();
 
+    clearErrors();
+
     authMessage.textContent = "";
-    authMessage.className = "auth-message";
+
+
+    // Check all fields
 
     let isValid = validateEmail() && validatePassword();
+
+
+    // Check name only in Signup
 
     if (currentMode === "signup") {
 
@@ -321,14 +399,18 @@ authForm.addEventListener("submit", function(event) {
 
     }
 
+
+    // Stop if form is invalid
+
     if (!isValid) {
 
-        authMessage.textContent =
-            "Please correct the errors above.";
-
-        authMessage.classList.add("error");
+        showMessage(
+            "Please correct the errors.",
+            "error"
+        );
 
         return;
+
     }
 
 
@@ -337,11 +419,34 @@ authForm.addEventListener("submit", function(event) {
     const passwordValue = password.value;
 
 
-    // SIGN UP
+    /* -------------------------
+       SIGNUP
+    -------------------------- */
 
     if (currentMode === "signup") {
 
-        const user = {
+        const oldUser = getUser();
+
+
+        // Check existing email
+
+        if (oldUser && oldUser.email === emailValue) {
+
+            showError(email, "Email already exists.");
+
+            showMessage(
+                "This email is already registered.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        // Create new user object
+
+        const newUser = {
 
             name: fullName.value.trim(),
 
@@ -352,187 +457,266 @@ authForm.addEventListener("submit", function(event) {
         };
 
 
-        saveUser(user);
-
-        authMessage.textContent =
-            "Account created successfully!";
-
-        authMessage.classList.add("success");
-
-        updateNavbar(user);
+        // Save user
 
         localStorage.setItem(
-            "studyHubLoggedIn",
-            "true"
+            "scholaraUser",
+            JSON.stringify(newUser)
         );
 
-        authForm.reset();
 
-        switchMode("login");
+        // Change to Login
 
-        authMessage.textContent =
-            "Welcome! Your account has been created.";
+        changeMode("login");
 
-        authMessage.classList.add("success");
+        showMessage(
+            "Account created successfully! Now login.",
+            "success"
+        );
 
         return;
+
     }
 
 
-    // LOGIN
+    /* -------------------------
+       LOGIN
+    -------------------------- */
 
-    const savedUser = getSavedUser();
+    const savedUser = getUser();
+
+
+    // Check if user exists
 
     if (!savedUser) {
 
-        authMessage.textContent =
-            "No account found. Please sign up first.";
-
-        authMessage.classList.add("error");
+        showMessage(
+            "No account found. Please Sign Up first.",
+            "error"
+        );
 
         return;
+
     }
 
+
+    // Check email and password
 
     if (
         emailValue === savedUser.email &&
         passwordValue === savedUser.password
     ) {
 
-        authMessage.textContent =
-            "Login successful! Welcome to StudyHub.";
-
-        authMessage.classList.add("success");
-
-        updateNavbar(savedUser);
+        // Save login status
 
         localStorage.setItem(
-            "studyHubLoggedIn",
+            "scholaraLoggedIn",
             "true"
         );
 
-        if (
-            document.getElementById("rememberMe").checked
-        ) {
+
+        // Remember Me
+
+        if (document.getElementById("rememberMe").checked) {
 
             localStorage.setItem(
-                "studyHubRemember",
+                "scholaraRemember",
                 "true"
-            );
-
-        } else {
-
-            localStorage.removeItem(
-                "studyHubRemember"
             );
 
         }
 
-    } else {
+        else {
 
-        authMessage.textContent =
-            "Incorrect email or password.";
+            localStorage.removeItem("scholaraRemember");
 
-        authMessage.classList.add("error");
+        }
+
+
+        // Show username
+
+        showUser(savedUser);
+
+
+        // Show success message
+
+        showMessage(
+            "Login successful! Welcome to Scholara.",
+            "success"
+        );
+
+    }
+
+    else {
+
+        showMessage(
+            "Incorrect email or password.",
+            "error"
+        );
 
     }
 
 });
 
 
-/* ===================================
-   6. FORGOT PASSWORD
-=================================== */
+/* =====================================
+   9. RESTORE LOGIN
+===================================== */
+
+function checkLogin() {
+
+    const user = getUser();
+
+    const loggedIn =
+        localStorage.getItem("scholaraLoggedIn") === "true";
+
+    if (user && loggedIn) {
+
+        showUser(user);
+
+    }
+
+    else {
+
+        hideUser();
+
+    }
+
+}
+
+checkLogin();
+
+
+/* =====================================
+   10. LOGOUT
+===================================== */
+
+document.getElementById("logoutBtn")
+    .addEventListener("click", function() {
+
+        localStorage.removeItem("scholaraLoggedIn");
+
+        localStorage.removeItem("scholaraRemember");
+
+        hideUser();
+
+        changeMode("login");
+
+        showMessage(
+            "You have logged out successfully.",
+            "success"
+        );
+
+    });
+
+
+/* =====================================
+   11. FORGOT PASSWORD
+===================================== */
 
 document.getElementById("forgotPassword")
     .addEventListener("click", function(event) {
 
         event.preventDefault();
 
-        const savedUser = getSavedUser();
-
-        if (!savedUser) {
-
-            alert("Please create an account first.");
-
-            return;
-        }
-
-        alert(
-            "Password reset requires an email service or backend."
+        showMessage(
+            "Password recovery is not available in this demo.",
+            "error"
         );
 
     });
 
 
-/* ===================================
-   7. FEATURES ARRAY OF OBJECTS
-=================================== */
+/* =====================================
+   12. FEATURES ARRAY
+===================================== */
+
+// Array of Objects
 
 const features = [
 
     {
-        icon: "📝",
-        title: "Task Management",
+        icon: "ri-checkbox-circle-line",
+
+        title: "Tasks",
+
         description:
-            "Create, organize and manage your daily tasks easily.",
-        link: "tasks.html",
-        button: "Manage Tasks"
+            "Organize your daily tasks and complete your goals.",
+
+        link: "pages/tasks.html"
+
     },
 
     {
-        icon: "⏱️",
+        icon: "ri-timer-line",
+
         title: "Study Timer",
+
         description:
-            "Track your study sessions and improve your focus.",
-        link: "timer.html",
-        button: "Start Studying"
+            "Manage your study time and improve your focus.",
+
+        link: "pages/timer.html"
+
     },
 
     {
-        icon: "📊",
-        title: "Grades & Progress",
+        icon: "ri-calculator-line",
+
+        title: "Grades",
+
         description:
-            "Check your academic performance and achievements.",
-        link: "grades.html",
-        button: "View Grades"
+            "Calculate and track your academic performance.",
+
+        link: "pages/grades.html"
+
     },
 
     {
-        icon: "📚",
-        title: "Study Notes",
+        icon: "ri-sticky-note-line",
+
+        title: "Notes",
+
         description:
-            "Save your important notes and learning materials.",
-        link: "notes.html",
-        button: "Open Notes"
+            "Save your important notes in one place.",
+
+        link: "pages/notes.html"
+
     },
 
     {
-        icon: "🎯",
-        title: "Daily Goals",
+        icon: "ri-calendar-check-line",
+
+        title: "Planning",
+
         description:
-            "Set personal learning goals and complete them.",
-        link: "goals.html",
-        button: "Set Goals"
+            "Plan your daily activities and stay organized.",
+
+        link: "pages/tasks.html"
+
     },
 
     {
-        icon: "🏆",
+        icon: "ri-trophy-line",
+
         title: "Achievements",
+
         description:
-            "Celebrate your progress and stay motivated.",
-        link: "achievements.html",
-        button: "View Awards"
+            "Celebrate your progress and reach your goals.",
+
+        link: "pages/grades.html"
+
     }
 
 ];
 
 
-// Generate feature cards using forEach
+// Get features container
 
 const featuresContainer =
     document.getElementById("featuresContainer");
 
+
+// Loop through features
 
 features.forEach(function(feature) {
 
@@ -540,65 +724,80 @@ features.forEach(function(feature) {
 
     card.className = "feature-card glass";
 
+
     card.innerHTML = `
 
         <div class="feature-icon">
-            ${feature.icon}
+
+            <i class="${feature.icon}"></i>
+
         </div>
 
         <h3>${feature.title}</h3>
 
         <p>${feature.description}</p>
 
-        <a href="${feature.link}" class="feature-link">
-            ${feature.button} →
+        <a href="${feature.link}">
+
+            Explore More
+
+            <i class="ri-arrow-right-line"></i>
+
         </a>
 
     `;
+
+
+    // Add card to HTML
 
     featuresContainer.appendChild(card);
 
 });
 
 
-/* ===================================
-   8. STATISTICS
-=================================== */
+/* =====================================
+   13. STUDY STATISTICS
+===================================== */
 
-/*
-  IMPORTANT:
-  Change these keys if your other pages
-  use different localStorage names.
-*/
+// These keys must match your other pages.
 
-const STORAGE_KEYS = {
+const TASK_KEY = "studyHubTasks";
 
-    tasks: "studyHubTasks",
-
-    hours: "studyHours"
-
-};
+const HOURS_KEY = "studyHours";
 
 
-// Read tasks from localStorage
+// Get tasks
 
 function getTasks() {
 
-    return JSON.parse(
-        localStorage.getItem(STORAGE_KEYS.tasks)
-    ) || [];
+    try {
+
+        const tasks = JSON.parse(
+            localStorage.getItem(TASK_KEY)
+        );
+
+        return Array.isArray(tasks) ? tasks : [];
+
+    }
+
+    catch (error) {
+
+        return [];
+
+    }
 
 }
 
 
-// Calculate completed tasks
+// Count completed tasks
 
-function getCompletedTasks(tasks) {
+function countCompleted(tasks) {
 
     return tasks.filter(function(task) {
 
         return (
             task.completed === true ||
+            task.isCompleted === true ||
             task.status === "completed" ||
             task.status === "Done"
         );
@@ -608,164 +807,175 @@ function getCompletedTasks(tasks) {
 }
 
 
-// Calculate study hours
+// Get study hours
 
-function getStudyHours() {
+function getHours() {
 
     const hours = Number(
-        localStorage.getItem(STORAGE_KEYS.hours)
+        localStorage.getItem(HOURS_KEY)
     );
 
-    return Number.isFinite(hours) ? hours : 0;
+    return Number.isFinite(hours) && hours >= 0
+        ? hours
+        : 0;
 
 }
 
 
-// Update statistics on Home page
+// Update statistics
 
 function updateStatistics() {
 
     const tasks = getTasks();
 
-    const completed = getCompletedTasks(tasks);
+    const completed = countCompleted(tasks);
 
     const total = tasks.length;
 
-    const hours = getStudyHours();
-
-    const successRate = total > 0
-        ? Math.round((completed / total) * 100)
-        : 0;
+    const hours = getHours();
 
 
-    // Update statistics cards
+    // Calculate percentage
 
-    document.getElementById("completedTasks")
-        .textContent = completed;
+    let percentage = 0;
 
-    document.getElementById("studyHours")
-        .textContent = hours;
+    if (total > 0) {
 
-    document.getElementById("totalTasks")
-        .textContent = total;
+        percentage = Math.round(
+            (completed / total) * 100
+        );
 
-    document.getElementById("successRate")
-        .textContent = successRate + "%";
+    }
 
 
-    // Update hero statistics
+    // Show values in HTML
 
-    document.getElementById("heroTasks")
-        .textContent = completed;
+    document.getElementById("completedTasks").textContent =
+        completed;
 
-    document.getElementById("heroHours")
-        .textContent = hours;
+    document.getElementById("studyHours").textContent =
+        hours;
+
+    document.getElementById("totalTasks").textContent =
+        total;
+
+    document.getElementById("successRate").textContent =
+        percentage + "%";
 
 }
 
 
-// Run statistics
+// Run function
 
 updateStatistics();
 
 
-/* ===================================
-   9. DAILY MOTIVATIONAL QUOTES
-=================================== */
+// Update statistics when another page changes data
+
+window.addEventListener("storage", function(event) {
+
+    if (
+        event.key === TASK_KEY ||
+        event.key === HOURS_KEY
+    ) {
+
+        updateStatistics();
+
+    }
+
+});
+
+
+/* =====================================
+   14. DAILY MOTIVATIONAL QUOTES
+===================================== */
+
+// Array of quotes
 
 const quotes = [
 
+    "Small progress is still progress.",
+
+    "Believe in yourself and keep going.",
+
     "The secret of getting ahead is getting started.",
 
-    "Success is the sum of small efforts repeated daily.",
+    "Your future depends on what you do today.",
 
-    "Believe you can and you're halfway there.",
-
-    "Don't stop when you're tired. Stop when you're done.",
-
-    "Learning never exhausts the mind.",
-
-    "Your future is created by what you do today.",
-
-    "Great things take time. Keep going!",
+    "Never stop learning because life never stops teaching.",
 
     "Dream big, work hard and stay focused.",
 
-    "Small progress is still progress.",
+    "Great things take time. Keep going!",
 
-    "Every expert was once a beginner."
+    "Success starts with a single step.",
+
+    "Every day is a new chance to improve.",
+
+    "Don't give up. You are doing great!"
 
 ];
 
 
-const dailyQuote =
-    document.getElementById("dailyQuote");
+// Get quote elements
 
-const newQuote =
-    document.getElementById("newQuote");
+const dailyQuote = document.getElementById("dailyQuote");
+
+const newQuote = document.getElementById("newQuote");
 
 
-// Generate a random quote
+// Store previous quote number
+
+let previousQuote = -1;
+
+
+// Generate new quote
 
 function generateQuote() {
 
-    const randomIndex =
-        Math.floor(Math.random() * quotes.length);
-
-    dailyQuote.style.opacity = "0";
-
-    setTimeout(function() {
-
-        dailyQuote.textContent =
-            quotes[randomIndex];
-
-        dailyQuote.style.opacity = "1";
-
-    }, 200);
-
-}
+    let randomNumber;
 
 
-// New quote button event
+    // Avoid showing the same quote twice
 
-newQuote.addEventListener("click", generateQuote);
+    do {
 
-
-/* ===================================
-   10. RESTORE LOGIN SESSION
-=================================== */
-
-function restoreSession() {
-
-    const savedUser = getSavedUser();
-
-    const isLoggedIn =
-        localStorage.getItem("studyHubLoggedIn") === "true";
-
-    const remember =
-        localStorage.getItem("studyHubRemember") === "true";
-
-    if (savedUser && isLoggedIn) {
-
-        updateNavbar(savedUser);
-
-        if (remember) {
-
-            authMessage.textContent =
-                "You are already logged in.";
-
-            authMessage.classList.add("success");
-
-        }
+        randomNumber = Math.floor(
+            Math.random() * quotes.length
+        );
 
     }
 
+    while (
+        randomNumber === previousQuote &&
+        quotes.length > 1
+    );
+
+
+    previousQuote = randomNumber;
+
+
+    // Change quote
+
+    dailyQuote.textContent = quotes[randomNumber];
+
 }
 
 
-restoreSession();
+// Button event
 
-const STORAGE_KEYS = {
-    tasks: "studyHubTasks",
-    hours: "studyHours"
-};
+newQuote.addEventListener("click", function() {
+
+    generateQuote();
+
+});
+
+
+// Show first quote
+
+generateQuote();
+
+
+/* =====================================
+   END OF HOME JAVASCRIPT
+===================================== */
