@@ -1,0 +1,160 @@
+/* =================================
+   SCHOLARA - GLASSMORPHISM THEME
+================================= */
+
+/* Light mode */
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-card: rgba(255, 255, 255, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.7);
+
+    --glass-shadow:
+        0 8px 32px rgba(47, 65, 86, 0.10);
+
+    --glass-blur: blur(18px);
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+    --glass-bg: rgba(28, 43, 59, 0.65);
+    --glass-card: rgba(40, 59, 78, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.10);
+
+    --glass-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* Background */
+body {
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(200, 217, 230, 0.65),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 90% 80%,
+            rgba(224, 159, 91, 0.18),
+            transparent 30%
+        ),
+        var(--bg);
+}
+
+[data-theme="dark"] body {
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(86, 124, 141, 0.25),
+            transparent 35%
+        ),
+        radial-gradient(
+            circle at 90% 80%,
+            rgba(224, 159, 91, 0.10),
+            transparent 30%
+        ),
+        var(--bg);
+    background-attachment: fixed;
+}
+
+/* Sidebar */
+.sidebar {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+
+    border-right: 1px solid var(--glass-border);
+
+    box-shadow: var(--glass-shadow);
+}
+
+/* Topbar */
+.topbar {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+
+    border-bottom: 1px solid var(--glass-border);
+}
+
+/* Cards */
+.card {
+    background: var(--glass-card);
+
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+
+    border: 1px solid var(--glass-border);
+
+    border-radius: 20px;
+
+    box-shadow: var(--glass-shadow);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        background 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 15px 35px rgba(47, 65, 86, 0.15);
+}
+
+/* Active sidebar link */
+.side-link.active {
+    background: rgba(224, 159, 91, 0.18);
+
+    border: 1px solid rgba(224, 159, 91, 0.25);
+}
+
+/* Hover links */
+.side-link:hover {
+    background: var(--glass-card);
+    backdrop-filter: blur(10px);
+}
+
+/* Theme switch */
+.theme-switch {
+    background: var(--glass-card);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+}
+
+/* Buttons */
+.btn {
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 12px rgba(47, 65, 86, 0.12);
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(47, 65, 86, 0.18);
+}
+
+/* Footer */
+.footer {
+    background: rgba(47, 65, 86, 0.92);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Overlay */
+.overlay {
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .sidebar {
+        background: var(--card);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+}
