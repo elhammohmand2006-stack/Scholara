@@ -1,119 +1,669 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Scholara - Home</title>
-    <link rel="icon" type="image/svg+xml" href="images/scholara-icon.svg">
 
+    <link rel="icon" type="image/svg+xml"
+        href="images/scholara-icon.svg">
 
-    <!-- choose the theme before the page shows (no flash): saved choice, or the device setting -->
+    <!-- Theme -->
     <script>
         (function () {
-            var saved = localStorage.getItem('theme');
-            var deviceDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (saved === 'dark' || (!saved && deviceDark)) {
-                document.documentElement.setAttribute('data-theme', 'dark');
+            const saved = localStorage.getItem("theme");
+            const deviceDark = window.matchMedia(
+                "(prefers-color-scheme: dark)"
+            ).matches;
+
+            if (saved === "dark" || (!saved && deviceDark)) {
+                document.documentElement.setAttribute(
+                    "data-theme", "dark"
+                );
             }
         })();
     </script>
 
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="css/glass.css">
+
 </head>
+
 <body>
-    <!-- top bar (only small screens) -->
+
+    <!-- =========================
+         TOP BAR
+    ========================== -->
+
     <div class="topbar">
-        <button id="menu-btn" aria-label="Open menu"><i class="ri-menu-line"></i></button>
+
+        <button id="menu-btn" aria-label="Open menu">
+            <i class="ri-menu-line"></i>
+        </button>
+
         <img src="images/scholara-icon.svg" alt="Scholara">
+
         <span style="width:26px"></span>
+
     </div>
 
-    <!-- sidebar -->
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
     <aside class="sidebar" id="sidebar">
-        <button class="sidebar-close" id="sidebar-close" aria-label="Close menu"><i class="ri-close-line"></i></button>
+
+        <button class="sidebar-close" id="sidebar-close"
+            aria-label="Close menu">
+
+            <i class="ri-close-line"></i>
+
+        </button>
+
+
+        <!-- Logo -->
 
         <a href="index.html" class="sidebar-logo">
-            <img src="images/scholara-logo-light.svg" alt="Scholara" class="logo-light">
-            <img src="images/scholara-logo-dark.svg" alt="Scholara" class="logo-dark">
+
+            <img src="images/scholara-logo-light.svg"
+                alt="Scholara" class="logo-light">
+
+            <img src="images/scholara-logo-dark.svg"
+                alt="Scholara" class="logo-dark">
+
         </a>
 
+
         <p class="side-label">MENU</p>
+
+
+        <!-- Navigation -->
+
         <nav class="side-nav">
-                <a href="index.html" class="side-link active" aria-current="page"><i class="ri-home-4-line"></i>Home</a>
-                <a href="pages/tasks.html" class="side-link"><i class="ri-checkbox-circle-line"></i>Tasks</a>
-                <a href="pages/timer.html" class="side-link"><i class="ri-timer-line"></i>Timer</a>
-                <a href="pages/grades.html" class="side-link"><i class="ri-calculator-line"></i>Grades</a>
-                <a href="pages/notes.html" class="side-link"><i class="ri-sticky-note-line"></i>Notes</a>
+
+            <a href="index.html"
+                class="side-link active"
+                aria-current="page">
+
+                <i class="ri-home-4-line"></i>
+                Home
+
+            </a>
+
+            <a href="pages/tasks.html" class="side-link">
+
+                <i class="ri-checkbox-circle-line"></i>
+                Tasks
+
+            </a>
+
+            <a href="pages/timer.html" class="side-link">
+
+                <i class="ri-timer-line"></i>
+                Timer
+
+            </a>
+
+            <a href="pages/grades.html" class="side-link">
+
+                <i class="ri-calculator-line"></i>
+                Grades
+
+            </a>
+
+            <a href="pages/notes.html" class="side-link">
+
+                <i class="ri-sticky-note-line"></i>
+                Notes
+
+            </a>
+
         </nav>
 
+
+        <!-- Theme Button -->
+
         <div class="side-bottom">
+
             <div class="theme-row">
+
                 <span class="theme-label">Theme</span>
-                <button class="theme-switch" id="theme-btn" role="switch" aria-checked="false" aria-label="Dark mode">
+
+                <button class="theme-switch"
+                    id="theme-btn"
+                    role="switch"
+                    aria-checked="false"
+                    aria-label="Dark mode">
+
                     <i class="ri-sun-line sun"></i>
                     <i class="ri-moon-line moon"></i>
+
                     <span class="thumb"></span>
+
                 </button>
+
+            </div>
+
+        </div>
+
     </aside>
+
+
+    <!-- Overlay -->
 
     <div class="overlay" id="overlay"></div>
 
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
     <div class="main">
+
         <main class="content">
+
+
+            <!-- WELCOME SECTION -->
+
+            <section class="welcome-section">
+
+                <div>
+
+                    <span class="welcome-label">
+                        YOUR PERSONAL STUDY SPACE
+                    </span>
+
+                    <h1>
+                        Welcome to <span>Scholara!</span>
+                    </h1>
+
+                    <p>
+                        Organize your tasks, manage your time
+                        and achieve your study goals.
+                    </p>
+
+                    <div class="welcome-user" id="welcomeUser" hidden>
+
+                        <i class="ri-user-smile-line"></i>
+
+                        Welcome,
+                        <strong id="userName">Student</strong>
+
+                        <button id="logoutBtn" type="button">
+                            Logout
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <div class="welcome-icon">
+
+                    <img src="images/scholara-icon.svg"
+                        alt="Scholara Logo">
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================
+                 LOGIN / SIGN UP
+            ========================== -->
+
+            <section class="auth-section">
+
+                <div class="auth-card glass">
+
+                    <div class="auth-logo">
+
+                        <img src="images/scholara-icon.svg"
+                            alt="Scholara">
+
+                    </div>
+
+                    <h2 id="formTitle">Welcome Back</h2>
+
+                    <p class="auth-description" id="formDescription">
+                        Sign in to continue your journey.
+                    </p>
+
+
+                    <!-- Tabs -->
+
+                    <div class="auth-tabs">
+
+                        <button id="loginTab"
+                            class="auth-tab active"
+                            type="button">
+
+                            Login
+
+                        </button>
+
+                        <button id="signupTab"
+                            class="auth-tab"
+                            type="button">
+
+                            Sign Up
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- Form -->
+
+                    <form id="authForm" novalidate>
+
+
+                        <!-- Name -->
+
+                        <div class="form-group" id="nameGroup" hidden>
+
+                            <label for="fullName">Full Name</label>
+
+                            <div class="input-box">
+
+                                <i class="ri-user-line"></i>
+
+                                <input type="text"
+                                    id="fullName"
+                                    placeholder="Enter your name">
+
+                            </div>
+
+                            <small id="nameError"></small>
+
+                        </div>
+
+
+                        <!-- Email -->
+
+                        <div class="form-group">
+
+                            <label for="email">Email Address</label>
+
+                            <div class="input-box">
+
+                                <i class="ri-mail-line"></i>
+
+                                <input type="email"
+                                    id="email"
+                                    placeholder="Enter your email">
+
+                            </div>
+
+                            <small id="emailError"></small>
+
+                        </div>
+
+
+                        <!-- Password -->
+
+                        <div class="form-group">
+
+                            <label for="password">Password</label>
+
+                            <div class="input-box">
+
+                                <i class="ri-lock-line"></i>
+
+                                <input type="password"
+                                    id="password"
+                                    placeholder="Enter your password">
+
+                                <button type="button"
+                                    id="togglePassword"
+                                    aria-label="Show password">
+
+                                    <i class="ri-eye-off-line"></i>
+
+                                </button>
+
+                            </div>
+
+                            <small id="passwordError"></small>
+
+                        </div>
+
+
+                        <!-- Remember Me -->
+
+                        <div class="remember-row" id="rememberRow">
+
+                            <label>
+                                <input type="checkbox" id="rememberMe">
+                                Remember Me
+                            </label>
+
+                            <a href="#" id="forgotPassword">
+                                Forgot Password?
+                            </a>
+
+                        </div>
+
+
+                        <!-- Submit -->
+
+                        <button type="submit"
+                            class="auth-submit"
+                            id="submitButton">
+
+                            Login
+
+                            <i class="ri-arrow-right-line"></i>
+
+                        </button>
+
+
+                        <!-- Message -->
+
+                        <p id="authMessage" aria-live="polite"></p>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================
+                 STATISTICS
+            ========================== -->
+
+            <section class="home-section">
+
+                <div class="section-heading">
+
+                    <span>YOUR PROGRESS</span>
+
+                    <h2>Study Statistics</h2>
+
+                    <p>
+                        See how much progress you have made.
+                    </p>
+
+                </div>
+
+
+                <div class="stats-grid">
+
+
+                    <!-- Completed Tasks -->
+
+                    <div class="stat-card glass">
+
+                        <div class="stat-icon">
+                            <i class="ri-checkbox-circle-line"></i>
+                        </div>
+
+                        <div>
+
+                            <h3 id="completedTasks">0</h3>
+
+                            <p>Completed Tasks</p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Study Hours -->
+
+                    <div class="stat-card glass">
+
+                        <div class="stat-icon">
+                            <i class="ri-time-line"></i>
+                        </div>
+
+                        <div>
+
+                            <h3 id="studyHours">0</h3>
+
+                            <p>Study Hours</p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Total Tasks -->
+
+                    <div class="stat-card glass">
+
+                        <div class="stat-icon">
+                            <i class="ri-task-line"></i>
+                        </div>
+
+                        <div>
+
+                            <h3 id="totalTasks">0</h3>
+
+                            <p>Total Tasks</p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Success Rate -->
+
+                    <div class="stat-card glass">
+
+                        <div class="stat-icon">
+                            <i class="ri-trophy-line"></i>
+                        </div>
+
+                        <div>
+
+                            <h3 id="successRate">0%</h3>
+
+                            <p>Success Rate</p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================
+                 FEATURES
+            ========================== -->
+
+            <section class="home-section" id="features">
+
+                <div class="section-heading">
+
+                    <span>EXPLORE SCHOLARA</span>
+
+                    <h2>Our Features</h2>
+
+                    <p>
+                        Everything you need for better learning.
+                    </p>
+
+                </div>
+
+
+                <!-- JavaScript adds cards here -->
+
+                <div class="features-grid"
+                    id="featuresContainer">
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================
+                 DAILY QUOTE
+            ========================== -->
+
+            <section class="quote-section glass">
+
+                <i class="ri-sparkling-2-line quote-icon"></i>
+
+                <span>DAILY MOTIVATION</span>
+
+                <h2>Keep Going!</h2>
+
+                <p id="dailyQuote">
+                    Small progress is still progress.
+                </p>
+
+                <button id="newQuote" type="button">
+
+                    <i class="ri-refresh-line"></i>
+
+                    New Quote
+
+                </button>
+
+            </section>
+
 
         </main>
 
-        <!-- footer -->
+
+
+        <!-- =========================
+             FOOTER
+        ========================== -->
+
         <footer class="footer">
+
             <div class="footer-grid">
+
                 <div class="footer-brand">
-                    <img src="images/scholara-logo-dark.svg" alt="Scholara">
-                    <p>A calm place for students to plan tasks, focus, track grades and keep notes.</p>
+
+                    <img src="images/scholara-logo-dark.svg"
+                        alt="Scholara">
+
+                    <p>
+                        A calm place for students to plan tasks,
+                        focus, track grades and keep notes.
+                    </p>
+
                 </div>
+
+
                 <div>
+
                     <h4>Pages</h4>
+
                     <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="pages/tasks.html">Tasks</a></li>
-                    <li><a href="pages/timer.html">Timer</a></li>
-                    <li><a href="pages/grades.html">Grades</a></li>
-                    <li><a href="pages/notes.html">Notes</a></li>
+
+                        <li><a href="index.html">Home</a></li>
+
+                        <li><a href="pages/tasks.html">Tasks</a></li>
+
+                        <li><a href="pages/timer.html">Timer</a></li>
+
+                        <li><a href="pages/grades.html">Grades</a></li>
+
+                        <li><a href="pages/notes.html">Notes</a></li>
+
                     </ul>
+
                 </div>
+
+
                 <div>
+
                     <h4>Team</h4>
+
                     <ul>
-                    <li>Member 1 - Home</li>
-                    <li>Member 2 - Tasks</li>
-                    <li>Member 3 - Timer</li>
-                    <li>Member 4 - Grades</li>
-                    <li>Member 5 - Notes</li>
+
+                        <li>Sohaima Jahid - Home</li>
+
+                        <li>Member 2 - Tasks</li>
+
+                        <li>Member 3 - Timer</li>
+
+                        <li>Member 4 - Grades</li>
+
+                        <li>Member 5 - Notes</li>
+
                     </ul>
+
                 </div>
+
+
                 <div>
+
                     <h4>Project</h4>
+
                     <ul>
+
                         <li><a href="#">GitHub repository</a></li>
+
                         <li><a href="#">README</a></li>
+
                     </ul>
+
                     <div class="footer-social">
-                        <a href="#" aria-label="GitHub"><i class="ri-github-line"></i></a>
-                        <a href="#" aria-label="Email"><i class="ri-mail-line"></i></a>
-                        <a href="#" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+
+                        <a href="#" aria-label="GitHub">
+                            <i class="ri-github-line"></i>
+                        </a>
+
+                        <a href="#" aria-label="Email">
+                            <i class="ri-mail-line"></i>
+                        </a>
+
+                        <a href="#" aria-label="Instagram">
+                            <i class="ri-instagram-line"></i>
+                        </a>
+
                     </div>
+
                 </div>
+
             </div>
-            <div class="footer-bottom">&copy; 2026 Scholara. Built by our JavaScript class group.</div>
+
+
+            <div class="footer-bottom">
+
+                &copy; 2026 Scholara.
+                Built by our JavaScript class group.
+
+            </div>
+
         </footer>
+
     </div>
+
+
+    <!-- JavaScript -->
 
     <script src="js/common.js"></script>
     <script src="js/home.js"></script>
+
 </body>
+
 </html>
