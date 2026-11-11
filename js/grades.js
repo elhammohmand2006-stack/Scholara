@@ -1,4 +1,3 @@
-// grades page script (only this page's owner edits this file)
  // ---------- Data ----------
   // Each course is an object: { id, name, grade, credits }
   const SAMPLE = [
@@ -162,4 +161,3 @@
   document.documentElement.dataset.theme = "light";
 
   render();
-
