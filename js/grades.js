@@ -1,163 +1,670 @@
- // ---------- Data ----------
-  // Each course is an object: { id, name, grade, credits }
-  const SAMPLE = [
-    { id: 1, name: "Introduction to Design", grade: 94, credits: 3 },
-    { id: 2, name: "Web Development", grade: 88, credits: 4 },
-    { id: 3, name: "Academic Writing", grade: 91, credits: 2 },
-    { id: 4, name: "Mathematics II", grade: 79, credits: 3 },
-    { id: 5, name: "Digital Media", grade: 85, credits: 3 }
-  ];
-  const store = {
-    get(key, fallback) { try { const v = localStorage.getItem(key); return v === null ? fallback : JSON.parse(v); } catch (e) { return fallback; } },
-    set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {} }
-  };
-  let courses = store.get("studyhub.courses", SAMPLE);
+(function () {
+    "use strict";
 
-  const $ = id => document.getElementById(id);
-  const ICON = (d) => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
-  const ICONS = {
-    moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/>',
-    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
-    trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'
-  };
+    /* =====================================
+       1. PAGE ELEMENTS
+    ===================================== */
 
-  // ---------- Helpers ----------
-  const rubric = g => g >= 90 ? { letter: "A", points: 4 } : g >= 80 ? { letter: "B", points: 3 } :
-                      g >= 70 ? { letter: "C", points: 2 } : g >= 60 ? { letter: "D", points: 1 } : { letter: "F", points: 0 };
-  const standingOf = gpa => gpa >= 3.5 ? "Excellent" : gpa >= 2.5 ? "Good" : gpa >= 1.5 ? "Needs effort" : "At risk";
-  const MESSAGES = {
-    "Excellent": ["Excellent work!", "Your results are outstanding. Keep this routine going."],
-    "Good": ["You're doing well!", "Steady progress. A little extra effort lifts your GPA further."],
-    "Needs effort": ["Room to grow", "Focus on your lowest grades first and plan regular study time."],
-    "At risk": ["Time to refocus", "Talk to your instructors and make a recovery plan this week."]
-  };
-  const escapeHTML = v => String(v).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const form = document.getElementById("courseForm");
 
-  function summarize() {
-    const credits = courses.reduce((sum, c) => sum + c.credits, 0);
-    const points = courses.reduce((sum, c) => sum + rubric(c.grade).points * c.credits, 0);
-    const gpa = credits ? points / credits : 0;
-    const grades = courses.map(c => c.grade);
-    return {
-      credits, gpa,
-      standing: courses.length ? standingOf(gpa) : "-",
-      avg: grades.length ? grades.reduce((a, b) => a + b, 0) / grades.length : null,
-      max: grades.length ? Math.max(...grades) : null,
-      min: grades.length ? Math.min(...grades) : null
-    };
-  }
-
-  function sortedCourses() {
-    const list = [...courses];
-    switch ($("sortSelect").value) {
-      case "grade-desc": return list.sort((a, b) => b.grade - a.grade);
-      case "grade-asc": return list.sort((a, b) => a.grade - b.grade);
-      case "credits": return list.sort((a, b) => b.credits - a.credits);
-      case "name": return list.sort((a, b) => a.name.localeCompare(b.name));
-      default: return list;
+    if (!form) {
+        return;
     }
-  }
 
-  // ---------- Render ----------
-  function render() {
-    const s = summarize();
-    const pct = v => v === null ? "-" : v.toFixed(1) + "%";
-    $("gpaStat").textContent = s.gpa.toFixed(2);
-    $("creditsStat").textContent = s.credits;
-    $("coursesStat").textContent = courses.length;
-    $("standingStat").textContent = s.standing;
-    $("standingNote").textContent = courses.length ? "Based on your weighted GPA" : "Add a course to begin";
-    $("ringValue").textContent = s.gpa.toFixed(2);
-    $("ring").style.setProperty("--p", (s.gpa / 4) * 100);
-    $("avgStat").textContent = pct(s.avg);
-    $("maxStat").textContent = pct(s.max);
-    $("minStat").textContent = pct(s.min);
-    $("statusChip").textContent = courses.length ? s.standing + " standing" : "No standing yet";
-    const msg = MESSAGES[s.standing] || ["No courses yet", "Add a course to see your standing."];
-    $("statusHeadline").textContent = msg[0];
-    $("statusText").textContent = msg[1];
+    const courseName = document.getElementById("courseName");
+    const courseGrade = document.getElementById("courseGrade");
+    const courseCredits = document.getElementById("courseCredits");
+    const courseRows = document.getElementById("courseRows");
+    const sortSelect = document.getElementById("sortSelect");
+    const cancelEdit = document.getElementById("cancelEdit");
+    const saveButton = document.getElementById("saveCourse");
+    const notice = document.getElementById("dataNotice");
+    const storageNote = document.getElementById("storageNote");
+    const toastBox = document.getElementById("toast");
 
-    $("courseRows").innerHTML = sortedCourses().map(c => {
-      const r = rubric(c.grade);
-      const cls = r.points >= 3 ? "high" : r.points === 2 ? "mid" : "low";
-      const initials = c.name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase();
-      return `<tr>
-        <td><span class="course-dot">${escapeHTML(initials)}</span><span class="fw-semibold">${escapeHTML(c.name)}</span></td>
-        <td>${Number(c.grade).toFixed(1)}%</td>
-        <td><span class="pill ${cls}">${r.letter}</span></td>
-        <td>${c.credits}</td>
-        <td class="fw-semibold">${r.points.toFixed(1)}</td>
-        <td class="text-end"><button class="icon-btn" type="button" data-remove="${c.id}" aria-label="Remove ${escapeHTML(c.name)}">${ICON(ICONS.trash)}</button></td>
-      </tr>`;
-    }).join("");
-    $("emptyState").hidden = courses.length > 0;
-    $("courseTable").hidden = courses.length === 0;
-  }
+    /* =====================================
+       2. STATE AND PROJECT RULES
+    ===================================== */
 
-  // ---------- Validation ----------
-  function setError(input, errorId, message) {
-    input.classList.toggle("is-invalid", Boolean(message));
-    $(errorId).textContent = message;
-    return !message;
-  }
-  function validate() {
-    const name = $("courseName").value.trim();
-    const gradeRaw = $("courseGrade").value.trim();
-    const creditsRaw = $("courseCredits").value.trim();
-    const grade = Number(gradeRaw), credits = Number(creditsRaw);
+    // Keep the old key so existing valid course records are retained.
+    const STORAGE_KEY = "studyhub.courses";
 
-    let nameMsg = "";
-    if (name.length < 2) nameMsg = "Enter a course name (at least 2 characters).";
-    else if (courses.some(c => c.name.toLowerCase() === name.toLowerCase())) nameMsg = "A course with this name already exists.";
+    const MESSAGES = {
+        "Excellent": [
+            "Excellent work!",
+            "Your effort is showing. Keep building on this routine."
+        ],
+        "Good": [
+            "You’re doing well!",
+            "Steady progress. Keep giving your learning time and attention."
+        ],
+        "Needs effort": [
+            "There’s room to grow",
+            "Start with one challenging course and one manageable study goal."
+        ],
+        "At risk": [
+            "A fresh plan can help",
+            "Consider discussing your next steps with your instructors."
+        ]
+    };
 
-    let gradeMsg = "";
-    if (gradeRaw === "" || !Number.isFinite(grade)) gradeMsg = "Enter a grade.";
-    else if (grade < 0 || grade > 100) gradeMsg = "Use a number from 0 to 100.";
+    let courses = [];
+    let editingId = null;
+    let toastTimer = null;
+    let storageAvailable = true;
+    let storageReadBlocked = false;
 
-    let creditsMsg = "";
-    if (creditsRaw === "" || !Number.isFinite(credits)) creditsMsg = "Enter the credits.";
-    else if (!Number.isInteger(credits) || credits < 1 || credits > 10) creditsMsg = "Use a whole number from 1 to 10.";
+    /* =====================================
+       3. GRADE CONVERSION
+    ===================================== */
 
-    const ok = [setError($("courseName"), "nameError", nameMsg), setError($("courseGrade"), "gradeError", gradeMsg), setError($("courseCredits"), "creditsError", creditsMsg)];
-    return ok.every(Boolean) ? { name, grade, credits } : null;
-  }
+    function gradeToPoints(grade) {
+        if (grade >= 90) {
+            return { letter: "A", points: 4 };
+        }
 
-  let toastTimer;
-  function toast(message) {
-    const box = $("toast");
-    box.textContent = message;
-    box.classList.add("show");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => box.classList.remove("show"), 2800);
-  }
+        if (grade >= 80) {
+            return { letter: "B", points: 3 };
+        }
 
-  // ---------- Events ----------
-  $("courseForm").addEventListener("submit", e => {
-    e.preventDefault();
-    const data = validate();
-    if (!data) return;
-    courses.push({ id: Date.now(), ...data });
-    store.set("studyhub.courses", courses);
-    e.target.reset();
+        if (grade >= 70) {
+            return { letter: "C", points: 2 };
+        }
+
+        if (grade >= 60) {
+            return { letter: "D", points: 1 };
+        }
+
+        return { letter: "F", points: 0 };
+    }
+
+    function progressLevel(gpa) {
+        // These thresholds are project rules, not institutional policy.
+        if (gpa >= 3.5) {
+            return "Excellent";
+        }
+
+        if (gpa >= 2.5) {
+            return "Good";
+        }
+
+        if (gpa >= 1.5) {
+            return "Needs effort";
+        }
+
+        return "At risk";
+    }
+
+    /* =====================================
+       4. LOCAL STORAGE AND DATA VALIDATION
+    ===================================== */
+
+    function makeId() {
+        if (window.crypto && typeof window.crypto.randomUUID === "function") {
+            return window.crypto.randomUUID();
+        }
+
+        return `course-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    }
+
+    function normalizeStoredCourse(value) {
+        if (!value || typeof value.name !== "string") {
+            return null;
+        }
+
+        const name = value.name.trim();
+
+        const validGradeType =
+            typeof value.grade === "number" ||
+            (typeof value.grade === "string" && value.grade.trim() !== "");
+
+        const validCreditsType =
+            typeof value.credits === "number" ||
+            (typeof value.credits === "string" && value.credits.trim() !== "");
+
+        if (!validGradeType || !validCreditsType) {
+            return null;
+        }
+
+        const grade = Number(value.grade);
+        const credits = Number(value.credits);
+
+        if (name.length < 2 || name.length > 45) {
+            return null;
+        }
+
+        if (!Number.isFinite(grade) || grade < 0 || grade > 100) {
+            return null;
+        }
+
+        if (!Number.isInteger(credits) || credits < 1 || credits > 10) {
+            return null;
+        }
+
+        const validId =
+            (typeof value.id === "string" && value.id.length > 0) ||
+            (typeof value.id === "number" && Number.isFinite(value.id));
+
+        return {
+            id: validId ? String(value.id) : makeId(),
+            name: name,
+            grade: grade,
+            credits: credits
+        };
+    }
+
+    function loadCourses() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+
+            if (raw === null) {
+                return;
+            }
+
+            const saved = JSON.parse(raw);
+
+            if (!Array.isArray(saved)) {
+                throw new Error("Saved courses must be an array.");
+            }
+
+            const usedIds = new Set();
+            const usedNames = new Set();
+            let skipped = 0;
+
+            for (const entry of saved) {
+                const course = normalizeStoredCourse(entry);
+
+                if (!course) {
+                    skipped++;
+                    continue;
+                }
+
+                const nameKey = course.name.toLocaleLowerCase();
+
+                if (usedNames.has(nameKey)) {
+                    skipped++;
+                    continue;
+                }
+
+                if (usedIds.has(course.id)) {
+                    course.id = makeId();
+                }
+
+                usedIds.add(course.id);
+                usedNames.add(nameKey);
+                courses.push(course);
+            }
+
+            if (skipped > 0) {
+                // Do not overwrite the original data automatically.
+                notice.textContent =
+                    `${skipped} invalid or duplicate saved record(s) were skipped. ` +
+                    "The original storage has not been changed. Back it up before saving new changes.";
+            }
+        } catch (error) {
+            storageAvailable = false;
+            storageReadBlocked = true;
+
+            notice.textContent =
+                "Saved courses could not be read. The original storage will not be overwritten. " +
+                "Changes on this page will remain in memory only.";
+
+            updateStorageMessage();
+        }
+    }
+
+    function updateStorageMessage() {
+        storageNote.textContent = storageAvailable
+            ? "Saved in this browser, on this device. Not synced to an account."
+            : "Storage is unavailable: changes remain only in this open page and may be lost after reload.";
+    }
+
+    function persistCourses(nextCourses) {
+        courses = nextCourses;
+
+        if (storageReadBlocked) {
+            updateStorageMessage();
+            return false;
+        }
+
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(courses));
+            storageAvailable = true;
+        } catch (error) {
+            storageAvailable = false;
+        }
+
+        updateStorageMessage();
+
+        return storageAvailable;
+    }
+
+    /* =====================================
+       5. CALCULATE SUMMARY
+    ===================================== */
+
+    function calculateSummary() {
+        let totalCredits = 0;
+        let weightedPoints = 0;
+        let totalGrades = 0;
+        let highestGrade = null;
+        let lowestGrade = null;
+
+        for (const course of courses) {
+            totalCredits += course.credits;
+            weightedPoints += gradeToPoints(course.grade).points * course.credits;
+            totalGrades += course.grade;
+
+            if (highestGrade === null || course.grade > highestGrade) {
+                highestGrade = course.grade;
+            }
+
+            if (lowestGrade === null || course.grade < lowestGrade) {
+                lowestGrade = course.grade;
+            }
+        }
+
+        const gpa = totalCredits > 0 ? weightedPoints / totalCredits : 0;
+
+        return {
+            totalCredits: totalCredits,
+            gpa: gpa,
+            level: courses.length ? progressLevel(gpa) : "—",
+            average: courses.length ? totalGrades / courses.length : null,
+            highest: highestGrade,
+            lowest: lowestGrade
+        };
+    }
+
+    function formatPercentage(value) {
+        return value === null ? "—" : `${value.toFixed(1)}%`;
+    }
+
+    function setText(id, text) {
+        document.getElementById(id).textContent = text;
+    }
+
+    function renderSummary() {
+        const summary = calculateSummary();
+        const hasCourses = courses.length > 0;
+
+        setText("gpaStat", summary.gpa.toFixed(2));
+        setText("creditsStat", summary.totalCredits);
+        setText("coursesStat", courses.length);
+        setText("standingStat", summary.level);
+        setText("standingNote", hasCourses ? "Based on this project’s GPA rules" : "Add a course to begin");
+
+        setText("ringValue", summary.gpa.toFixed(2));
+        setText("avgStat", formatPercentage(summary.average));
+        setText("maxStat", formatPercentage(summary.highest));
+        setText("minStat", formatPercentage(summary.lowest));
+        setText("statusChip", hasCourses ? `${summary.level} progress` : "No progress level yet");
+
+        const ring = document.getElementById("ring");
+        const percentage = Math.max(0, Math.min(100, (summary.gpa / 4) * 100));
+
+        ring.style.setProperty("--p", percentage);
+        ring.setAttribute("aria-label", `GPA ${summary.gpa.toFixed(2)} out of 4.00`);
+
+        const message = MESSAGES[summary.level] || [
+            "Your progress starts here",
+            "Add a course to see your progress."
+        ];
+
+        setText("statusHeadline", message[0]);
+        setText("statusText", message[1]);
+    }
+
+    /* =====================================
+       6. SORT COURSES
+    ===================================== */
+
+    function getSortedCourses() {
+        const sorted = [...courses];
+
+        switch (sortSelect.value) {
+            case "grade-desc":
+                return sorted.sort((first, second) => second.grade - first.grade);
+
+            case "grade-asc":
+                return sorted.sort((first, second) => first.grade - second.grade);
+
+            case "credits":
+                return sorted.sort((first, second) => second.credits - first.credits);
+
+            case "name":
+                return sorted.sort((first, second) => first.name.localeCompare(second.name));
+
+            default:
+                return sorted;
+        }
+    }
+
+    /* =====================================
+       7. SAFE TABLE RENDERING
+    ===================================== */
+
+    function makeElement(tag, className, text) {
+        const element = document.createElement(tag);
+
+        if (className) {
+            element.className = className;
+        }
+
+        if (text !== undefined) {
+            element.textContent = text;
+        }
+
+        return element;
+    }
+
+    function makeActionButton(action, iconClass, label, id) {
+        const button = makeElement("button", "grade-icon-button");
+        const icon = makeElement("i", iconClass);
+
+        button.type = "button";
+        button.dataset.action = action;
+        button.dataset.id = id;
+        button.title = label;
+        button.setAttribute("aria-label", label);
+        icon.setAttribute("aria-hidden", "true");
+        button.append(icon);
+
+        return button;
+    }
+
+    function createCourseRow(course) {
+        const row = document.createElement("tr");
+        const conversion = gradeToPoints(course.grade);
+
+        const nameCell = document.createElement("td");
+        const nameWrapper = makeElement("div", "grade-course-name");
+
+        const initials = course.name.trim()
+            .split(/\s+/u)
+            .slice(0, 2)
+            .map(word => Array.from(word)[0])
+            .join("")
+            .toLocaleUpperCase();
+
+        const initialsElement = makeElement("span", "grade-course-initials", initials);
+        initialsElement.setAttribute("aria-hidden", "true");
+
+        const name = makeElement("span", "", course.name);
+        name.dir = "auto";
+
+        nameWrapper.append(initialsElement, name);
+        nameCell.append(nameWrapper);
+
+        const gradeCell = makeElement("td", "", `${course.grade.toFixed(1)}%`);
+        const letterCell = document.createElement("td");
+
+        const levelClass = conversion.points >= 3
+            ? "high"
+            : conversion.points === 2 ? "mid" : "low";
+
+        letterCell.append(makeElement("span", `grade-letter ${levelClass}`, conversion.letter));
+
+        const creditsCell = makeElement("td", "", course.credits);
+        const pointsCell = makeElement("td", "", conversion.points.toFixed(1));
+        const actionsCell = document.createElement("td");
+        const actions = makeElement("div", "grade-row-actions");
+
+        actions.append(
+            makeActionButton("edit", "ri-edit-line", `Edit ${course.name}`, course.id),
+            makeActionButton("delete", "ri-delete-bin-line", `Remove ${course.name}`, course.id)
+        );
+
+        actionsCell.append(actions);
+        row.append(nameCell, gradeCell, letterCell, creditsCell, pointsCell, actionsCell);
+
+        return row;
+    }
+
+    function renderTable() {
+        const fragment = document.createDocumentFragment();
+
+        for (const course of getSortedCourses()) {
+            fragment.append(createCourseRow(course));
+        }
+
+        courseRows.replaceChildren(fragment);
+
+        document.getElementById("emptyState").hidden = courses.length > 0;
+        document.getElementById("tableWrapper").hidden = courses.length === 0;
+    }
+
+    function render() {
+        renderSummary();
+        renderTable();
+    }
+
+    /* =====================================
+       8. VALIDATION AND ERROR MESSAGES
+    ===================================== */
+
+    function setFieldError(input, errorId, message) {
+        input.setAttribute("aria-invalid", String(Boolean(message)));
+        document.getElementById(errorId).textContent = message;
+
+        return message === "";
+    }
+
+    function clearErrors() {
+        setFieldError(courseName, "nameError", "");
+        setFieldError(courseGrade, "gradeError", "");
+        setFieldError(courseCredits, "creditsError", "");
+    }
+
+    function validateForm() {
+        const name = courseName.value.trim();
+        const rawGrade = courseGrade.value.trim();
+        const rawCredits = courseCredits.value.trim();
+
+        const grade = Number(rawGrade);
+        const credits = Number(rawCredits);
+
+        let nameMessage = "";
+        let gradeMessage = "";
+        let creditsMessage = "";
+
+        if (name.length < 2 || name.length > 45) {
+            nameMessage = "Use a course name with 2 to 45 characters.";
+        } else {
+            const duplicate = courses.some(function (course) {
+                return course.id !== editingId &&
+                    course.name.toLocaleLowerCase() === name.toLocaleLowerCase();
+            });
+
+            if (duplicate) {
+                nameMessage = "A course with this name already exists.";
+            }
+        }
+
+        if (rawGrade === "" || !Number.isFinite(grade)) {
+            gradeMessage = "Enter a grade.";
+        } else if (grade < 0 || grade > 100) {
+            gradeMessage = "Use a number from 0 to 100.";
+        }
+
+        if (rawCredits === "" || !Number.isFinite(credits)) {
+            creditsMessage = "Enter the credits.";
+        } else if (!Number.isInteger(credits) || credits < 1 || credits > 10) {
+            creditsMessage = "Use a whole number from 1 to 10.";
+        }
+
+        const checks = [
+            setFieldError(courseName, "nameError", nameMessage),
+            setFieldError(courseGrade, "gradeError", gradeMessage),
+            setFieldError(courseCredits, "creditsError", creditsMessage)
+        ];
+
+        if (!checks.every(Boolean)) {
+            form.querySelector('[aria-invalid="true"]').focus();
+            return null;
+        }
+
+        return { name: name, grade: grade, credits: credits };
+    }
+
+    /* =====================================
+       9. NOTIFICATIONS
+    ===================================== */
+
+    function showToast(message) {
+        toastBox.textContent = message;
+        toastBox.classList.add("show");
+        clearTimeout(toastTimer);
+
+        toastTimer = setTimeout(function () {
+            toastBox.classList.remove("show");
+        }, 4500);
+    }
+
+    function showSaveResult(savedMessage) {
+        showToast(storageAvailable
+            ? savedMessage
+            : "Changed in this page only. Browser storage is unavailable; changes may be lost after reload."
+        );
+    }
+
+    /* =====================================
+       10. ADD AND EDIT COURSES
+    ===================================== */
+
+    function resetEditor() {
+        editingId = null;
+        form.reset();
+        clearErrors();
+
+        setText("form-title", "Add a course");
+        setText("form-description", "Enter the details to update your GPA.");
+        saveButton.textContent = "Add course";
+        cancelEdit.hidden = true;
+    }
+
+    function startEditing(id) {
+        const course = courses.find(item => item.id === id);
+
+        if (!course) {
+            return;
+        }
+
+        editingId = id;
+        clearErrors();
+
+        courseName.value = course.name;
+        courseGrade.value = course.grade;
+        courseCredits.value = course.credits;
+
+        setText("form-title", "Edit course");
+        setText("form-description", "Update the details and save your changes.");
+        saveButton.textContent = "Save changes";
+        cancelEdit.hidden = false;
+
+        courseName.focus();
+    }
+
+    function submitCourse(event) {
+        event.preventDefault();
+
+        const data = validateForm();
+
+        if (!data) {
+            return;
+        }
+
+        const wasEditing = editingId !== null;
+        let nextCourses;
+
+        if (wasEditing) {
+            nextCourses = courses.map(function (course) {
+                return course.id === editingId ? { ...course, ...data } : course;
+            });
+        } else {
+            nextCourses = [...courses, { id: makeId(), ...data }];
+        }
+
+        persistCourses(nextCourses);
+        resetEditor();
+        render();
+        showSaveResult(wasEditing ? "Course updated. GPA recalculated." : "Course added. GPA updated.");
+        courseName.focus();
+    }
+
+    /* =====================================
+       11. REMOVE COURSES
+    ===================================== */
+
+    function removeCourse(id) {
+        const course = courses.find(item => item.id === id);
+
+        if (!course) {
+            return;
+        }
+
+        const confirmed = window.confirm(`Remove “${course.name}” from your grade book?`);
+
+        if (!confirmed) {
+            return;
+        }
+
+        persistCourses(courses.filter(item => item.id !== id));
+
+        if (editingId === id) {
+            resetEditor();
+        }
+
+        render();
+        showSaveResult("Course removed. GPA updated.");
+        courseName.focus();
+    }
+
+    /* =====================================
+       12. EVENTS
+    ===================================== */
+
+    form.addEventListener("submit", submitCourse);
+    sortSelect.addEventListener("change", renderTable);
+
+    cancelEdit.addEventListener("click", function () {
+        resetEditor();
+        courseName.focus();
+    });
+
+    courseRows.addEventListener("click", function (event) {
+        const button = event.target.closest("button[data-action]");
+
+        if (!button || !courseRows.contains(button)) {
+            return;
+        }
+
+        if (button.dataset.action === "edit") {
+            startEditing(button.dataset.id);
+        } else if (button.dataset.action === "delete") {
+            removeCourse(button.dataset.id);
+        }
+    });
+
+    const fields = [
+        [courseName, "nameError"],
+        [courseGrade, "gradeError"],
+        [courseCredits, "creditsError"]
+    ];
+
+    for (const [input, errorId] of fields) {
+        input.addEventListener("input", function () {
+            setFieldError(input, errorId, "");
+        });
+    }
+
+    /* =====================================
+       13. INITIAL SETUP
+       common.js controls the sidebar and theme.
+       Do not force light mode here.
+    ===================================== */
+
+    loadCourses();
     render();
-    toast("Course added. GPA updated.");
-    $("courseName").focus();
-  });
 
-  $("courseRows").addEventListener("click", e => {
-    const btn = e.target.closest("[data-remove]");
-    if (!btn) return;
-    courses = courses.filter(c => c.id !== Number(btn.dataset.remove));
-    store.set("studyhub.courses", courses);
-    render();
-    toast("Course removed.");
-  });
-
-  ["courseName", "courseGrade", "courseCredits"].forEach(id =>
-    $(id).addEventListener("input", () => $(id).classList.remove("is-invalid")));
-  $("sortSelect").addEventListener("change", render);
-
-  // Dark mode disabled: always light theme
-  document.documentElement.dataset.theme = "light";
-
-  render();
+})();

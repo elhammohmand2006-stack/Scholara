@@ -3,39 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scholara - Grades</title>
+    <title>Scholara — Grades</title>
     <link rel="icon" type="image/svg+xml" href="../images/scholara-icon.svg">
 
-    <!-- choose the theme before the page shows (no flash): saved choice, or the device setting -->
+    <!-- Apply the saved theme before displaying the page. -->
     <script>
-        (function () {
-            var saved = localStorage.getItem('theme');
-            var deviceDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (saved === 'dark' || (!saved && deviceDark)) {
-                document.documentElement.setAttribute('data-theme', 'dark');
+        try {
+            const savedTheme = localStorage.getItem("theme");
+            const deviceDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+            if (savedTheme === "dark" || (!savedTheme && deviceDark)) {
+                document.documentElement.dataset.theme = "dark";
             }
-        })();
+        } catch (error) {
+            // The page remains usable when storage is unavailable.
+        }
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css">
+
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/grades.css">
     <link rel="stylesheet" href="../css/glass.css">
+    <link rel="stylesheet" href="../css/grades.css">
+    <link rel="stylesheet" href="../css/grades-refresh.css">
 </head>
+
 <body>
-    <!-- top bar (only small screens) -->
+    <!-- Shared mobile top bar -->
     <div class="topbar">
-        <button id="menu-btn" aria-label="Open menu"><i class="ri-menu-line"></i></button>
+        <button id="menu-btn" aria-label="Open menu">
+            <i class="ri-menu-line" aria-hidden="true"></i>
+        </button>
+
         <img src="../images/scholara-icon.svg" alt="Scholara">
-        <span style="width:26px"></span>
+        <span style="width: 26px"></span>
     </div>
 
-    <!-- sidebar -->
+    <!-- Shared sidebar -->
     <aside class="sidebar" id="sidebar">
-        <button class="sidebar-close" id="sidebar-close" aria-label="Close menu"><i class="ri-close-line"></i></button>
+        <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">
+            <i class="ri-close-line" aria-hidden="true"></i>
+        </button>
 
         <a href="../index.html" class="sidebar-logo">
             <img src="../images/scholara-logo-light.svg" alt="Scholara" class="logo-light">
@@ -43,183 +54,276 @@
         </a>
 
         <p class="side-label">MENU</p>
-        <nav class="side-nav">
-                <a href="../index.html" class="side-link"><i class="ri-home-4-line"></i>Home</a>
-                <a href="tasks.html" class="side-link"><i class="ri-checkbox-circle-line"></i>Tasks</a>
-                <a href="timer.html" class="side-link"><i class="ri-timer-line"></i>Timer</a>
-                <a href="grades.html" class="side-link active" aria-current="page"><i class="ri-calculator-line"></i>Grades</a>
-                <a href="notes.html" class="side-link"><i class="ri-sticky-note-line"></i>Notes</a>
+
+        <nav class="side-nav" aria-label="Main navigation">
+            <a href="../index.html" class="side-link">
+                <i class="ri-home-4-line" aria-hidden="true"></i>
+                Home
+            </a>
+
+            <a href="tasks.html" class="side-link">
+                <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
+                Tasks
+            </a>
+
+            <a href="timer.html" class="side-link">
+                <i class="ri-timer-line" aria-hidden="true"></i>
+                Timer
+            </a>
+
+            <a href="grades.html" class="side-link active" aria-current="page">
+                <i class="ri-calculator-line" aria-hidden="true"></i>
+                Grades
+            </a>
+
+            <a href="notes.html" class="side-link">
+                <i class="ri-sticky-note-line" aria-hidden="true"></i>
+                Notes
+            </a>
         </nav>
 
         <div class="side-bottom">
             <div class="theme-row">
                 <span class="theme-label">Theme</span>
+
                 <button class="theme-switch" id="theme-btn" role="switch" aria-checked="false" aria-label="Dark mode">
-                    <i class="ri-sun-line sun"></i>
-                    <i class="ri-moon-line moon"></i>
+                    <i class="ri-sun-line sun" aria-hidden="true"></i>
+                    <i class="ri-moon-line moon" aria-hidden="true"></i>
                     <span class="thumb"></span>
                 </button>
+            </div>
+        </div>
     </aside>
 
     <div class="overlay" id="overlay"></div>
 
     <div class="main">
-        <main class="content">
-            <div class="shell">
+        <main class="content grades-page">
+            <!-- Heading -->
+            <header class="grades-heading">
+                <div>
+                    <p class="grades-eyebrow">SMALL EFFORTS. MEANINGFUL PROGRESS.</p>
+                    <h1>Grades &amp; GPA</h1>
+                    <p>Track your progress and keep your goals in sight.</p>
+                </div>
 
-  <main class="content">
-    <header class="navbar-glass glass">
-      <div class="brand"><img src="data:image/png;base64,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" alt="" width="40" height="40"><strong>StudyHub</strong></div>
-      <div class="d-flex align-items-center gap-2">
-        <div class="avatar" aria-label="Student profile">ST</div>
-      </div>
-    </header>
+                <span class="grades-heading-badge">
+                    <i class="ri-graduation-cap-line" aria-hidden="true"></i>
+                    Your learning, in perspective
+                </span>
+            </header>
 
-    <div class="page-head">
-      <h1>Grades &amp; GPA</h1>
-      <div class="subheading">Track your progress and keep your goals in sight.</div>
-    </div>
+            <!-- Summary cards -->
+            <section class="grades-summary" aria-label="Grade book summary">
+                <article class="grade-stat grades-glass">
+                    <div class="grade-stat-head">
+                        <h2>GPA</h2>
+                        <span class="grade-stat-icon"><i class="ri-star-line" aria-hidden="true"></i></span>
+                    </div>
+                    <strong id="gpaStat">0.00</strong>
+                    <p>Weighted by credits · out of 4.00</p>
+                </article>
 
-    <section class="row g-3 mb-4" aria-label="GPA summary">
-      <div class="col-sm-6 col-xl-3"><div class="stat glass">
-        <div class="stat-head">Cumulative GPA <span class="stat-icon"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/></svg></span></div>
-        <div class="stat-value" id="gpaStat">0.00</div><div class="stat-note">Weighted by credits</div></div></div>
-      <div class="col-sm-6 col-xl-3"><div class="stat glass">
-        <div class="stat-head">Total credits <span class="stat-icon"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/></svg></span></div>
-        <div class="stat-value" id="creditsStat">0</div><div class="stat-note">Across all courses</div></div></div>
-      <div class="col-sm-6 col-xl-3"><div class="stat glass">
-        <div class="stat-head">Courses <span class="stat-icon"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5V21h16"/></svg></span></div>
-        <div class="stat-value" id="coursesStat">0</div><div class="stat-note">In your grade book</div></div></div>
-      <div class="col-sm-6 col-xl-3"><div class="stat glass">
-        <div class="stat-head">Academic standing <span class="stat-icon"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="9" r="6"/><path d="m8.5 14-1.5 7 5-3 5 3-1.5-7"/></svg></span></div>
-        <div class="stat-value text" id="standingStat">-</div><div class="stat-note" id="standingNote">Add a course to begin</div></div></div>
-    </section>
+                <article class="grade-stat grades-glass">
+                    <div class="grade-stat-head">
+                        <h2>Total credits</h2>
+                        <span class="grade-stat-icon"><i class="ri-stack-line" aria-hidden="true"></i></span>
+                    </div>
+                    <strong id="creditsStat">0</strong>
+                    <p>Across your saved courses</p>
+                </article>
 
-    <section class="row g-3 mb-3">
-      <div class="col-xl-8">
-        <div class="panel glass h-100">
-          <div class="d-flex justify-content-between align-items-start gap-3 mb-3 flex-wrap">
-            <div><h2 class="section-title">Course grades</h2><div class="section-note mt-1">Your current semester performance</div></div>
-            <div class="d-flex align-items-center gap-2">
-              <label for="sortSelect" class="section-note">Sort by</label>
-              <select class="form-select form-select-sm w-auto" id="sortSelect">
-                <option value="default">Date added</option>
-                <option value="grade-desc">Highest grade</option>
-                <option value="grade-asc">Lowest grade</option>
-                <option value="credits">Most credits</option>
-                <option value="name">Course name</option>
-              </select>
+                <article class="grade-stat grades-glass">
+                    <div class="grade-stat-head">
+                        <h2>Courses</h2>
+                        <span class="grade-stat-icon"><i class="ri-book-open-line" aria-hidden="true"></i></span>
+                    </div>
+                    <strong id="coursesStat">0</strong>
+                    <p>In your grade book</p>
+                </article>
+
+                <article class="grade-stat grades-glass">
+                    <div class="grade-stat-head">
+                        <h2>Progress level</h2>
+                        <span class="grade-stat-icon"><i class="ri-medal-line" aria-hidden="true"></i></span>
+                    </div>
+                    <strong id="standingStat" class="grade-standing-value">—</strong>
+                    <p id="standingNote">Add a course to begin</p>
+                </article>
+            </section>
+
+            <!-- Course table and GPA ring -->
+            <div class="grades-main-grid">
+                <section class="grade-panel grades-glass" aria-labelledby="course-table-title">
+                    <div class="grade-section-heading">
+                        <div>
+                            <h2 id="course-table-title">Course grades</h2>
+                            <p>All courses in this grade book</p>
+                        </div>
+
+                        <label class="grade-sort" for="sortSelect">
+                            <span>Sort by</span>
+                            <select id="sortSelect">
+                                <option value="default">Date added</option>
+                                <option value="grade-desc">Highest grade</option>
+                                <option value="grade-asc">Lowest grade</option>
+                                <option value="credits">Most credits</option>
+                                <option value="name">Course name</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="grade-table-scroll" id="tableWrapper" role="region" aria-label="Course grades table; scroll horizontally on small screens" tabindex="0">
+                        <table class="grade-table" id="courseTable">
+                            <caption class="grades-sr-only">Course grades, credits, grade points and actions</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Course</th>
+                                    <th scope="col">Grade</th>
+                                    <th scope="col">Letter</th>
+                                    <th scope="col">Credits</th>
+                                    <th scope="col">Points</th>
+                                    <th scope="col"><span class="grades-sr-only">Actions</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="courseRows"></tbody>
+                        </table>
+                    </div>
+
+                    <div id="emptyState" class="grade-empty" hidden>
+                        <i class="ri-book-open-line" aria-hidden="true"></i>
+                        <h3>A fresh start for your progress.</h3>
+                        <p>Add your first course below to see your GPA.</p>
+                    </div>
+                </section>
+
+                <section class="grade-status" aria-labelledby="statusHeadline">
+                    <p class="grades-eyebrow">A MOMENT TO REFLECT</p>
+                    <h2 id="statusHeadline">Your progress starts here</h2>
+                    <p class="grade-status-text" id="statusText">Add a course to see your progress.</p>
+
+                    <div class="grade-ring" id="ring" role="img" aria-label="GPA 0.00 out of 4.00">
+                        <div class="grade-ring-copy">
+                            <strong id="ringValue">0.00</strong>
+                            <span>out of 4.00</span>
+                        </div>
+                    </div>
+
+                    <div class="grade-chip-wrap"><span class="grade-chip" id="statusChip">No progress level yet</span></div>
+
+                    <dl class="grade-mini-stats">
+                        <div><dt>Average grade</dt><dd id="avgStat">—</dd></div>
+                        <div><dt>Highest grade</dt><dd id="maxStat">—</dd></div>
+                        <div><dt>Lowest grade</dt><dd id="minStat">—</dd></div>
+                    </dl>
+                    <p class="grade-status-footnote">Progress labels are project indicators, not an official academic standing.</p>
+                </section>
             </div>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-hover" id="courseTable">
-              <thead><tr><th>Course</th><th>Grade</th><th>Letter</th><th>Credits</th><th>Points</th><th><span class="visually-hidden">Actions</span></th></tr></thead>
-              <tbody id="courseRows"></tbody>
-            </table>
-          </div>
-          <div id="emptyState" class="empty" hidden>No courses yet. Add your first course below to see your GPA.</div>
-        </div>
-      </div>
-      <div class="col-xl-4">
-        <div class="status glass">
-          <h2 class="h5 fw-bold mb-1" id="statusHeadline">No courses yet</h2>
-          <p class="soft small mb-4" id="statusText">Add a course to see your standing.</p>
-          <div class="ring mb-4" id="ring" role="img" aria-label="GPA out of 4"><div><strong id="ringValue">0.00</strong><small>out of 4.00</small></div></div>
-          <div class="text-center mb-3"><span class="chip" id="statusChip">No standing yet</span></div>
-          <div class="mini"><span class="soft">Average grade</span><strong id="avgStat">-</strong></div>
-          <div class="mini"><span class="soft">Highest grade</span><strong id="maxStat">-</strong></div>
-          <div class="mini"><span class="soft">Lowest grade</span><strong id="minStat">-</strong></div>
-        </div>
-      </div>
-    </section>
 
-    <section class="row g-3">
-      <div class="col-xl-7">
-        <div class="panel glass h-100">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <div><h2 class="section-title">Add a course</h2><div class="section-note mt-1">Enter the details to update your GPA.</div></div>
-            <span class="stat-icon"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></span>
-          </div>
-          <form id="courseForm" novalidate>
-            <div class="row g-3">
-              <div class="col-md-5"><label class="form-label" for="courseName">Course name</label>
-                <input class="form-control" id="courseName" placeholder="e.g. Biology 101" maxlength="45" autocomplete="off">
-                <div class="invalid-feedback" id="nameError"></div></div>
-              <div class="col-md-3 col-6"><label class="form-label" for="courseGrade">Grade (0-100)</label>
-                <input class="form-control" id="courseGrade" type="number" inputmode="decimal" step="0.1" placeholder="92">
-                <div class="invalid-feedback" id="gradeError"></div></div>
-              <div class="col-md-2 col-6"><label class="form-label" for="courseCredits">Credits</label>
-                <input class="form-control" id="courseCredits" type="number" inputmode="numeric" step="1" placeholder="3">
-                <div class="invalid-feedback" id="creditsError"></div></div>
-              <div class="col-md-2"><label class="form-label d-none d-md-block">&nbsp;</label><button class="btn btn-accent w-100" type="submit">Add course</button></div>
+            <!-- Course form and grading rubric -->
+            <div class="grades-bottom-grid">
+                <section class="grade-panel grades-glass" aria-labelledby="form-title">
+                    <div class="grade-section-heading">
+                        <div>
+                            <h2 id="form-title">Add a course</h2>
+                            <p id="form-description">Enter the details to update your GPA.</p>
+                        </div>
+                        <span class="grade-stat-icon"><i class="ri-add-line" aria-hidden="true"></i></span>
+                    </div>
+
+                    <form id="courseForm" novalidate>
+                        <div class="grade-form-grid">
+                            <div class="grade-field grade-name-field">
+                                <label for="courseName">Course name</label>
+                                <input id="courseName" type="text" placeholder="e.g. Biology 101" maxlength="45" autocomplete="off" required aria-describedby="nameError" dir="auto">
+                                <p class="grade-error" id="nameError"></p>
+                            </div>
+
+                            <div class="grade-field">
+                                <label for="courseGrade">Grade (0–100)</label>
+                                <input id="courseGrade" type="number" inputmode="decimal" min="0" max="100" step="any" placeholder="92" required aria-describedby="gradeError">
+                                <p class="grade-error" id="gradeError"></p>
+                            </div>
+
+                            <div class="grade-field">
+                                <label for="courseCredits">Credits (1–10)</label>
+                                <input id="courseCredits" type="number" inputmode="numeric" min="1" max="10" step="1" placeholder="3" required aria-describedby="creditsError">
+                                <p class="grade-error" id="creditsError"></p>
+                            </div>
+                        </div>
+
+                        <div class="grade-form-actions">
+                            <p>All fields are required. Course names must be unique.</p>
+                            <div>
+                                <button class="grade-button grade-button-secondary" id="cancelEdit" type="button" hidden>Cancel</button>
+                                <button class="grade-button grade-button-primary" id="saveCourse" type="submit">Add course</button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <section class="grade-panel grades-glass" aria-labelledby="rubric-title">
+                    <div class="grade-section-heading">
+                        <div>
+                            <h2 id="rubric-title">GPA rubric</h2>
+                            <p>The simple 4.0 scale used by this project</p>
+                        </div>
+                    </div>
+
+                    <div class="grade-rubric">
+                        <div><span>A · 90 ≤ grade ≤ 100</span><strong>4.0</strong></div>
+                        <div><span>B · 80 ≤ grade &lt; 90</span><strong>3.0</strong></div>
+                        <div><span>C · 70 ≤ grade &lt; 80</span><strong>2.0</strong></div>
+                        <div><span>D · 60 ≤ grade &lt; 70</span><strong>1.0</strong></div>
+                        <div><span>F · 0 ≤ grade &lt; 60</span><strong>0.0</strong></div>
+                    </div>
+
+                    <p class="grade-formula">GPA = Σ (grade points × credits) ÷ total credits.</p>
+                    <p class="grade-small-note">Average grade is the unweighted mean of course percentages. Your institution may use a different grading scale.</p>
+                </section>
             </div>
-            <div class="section-note mt-3">All fields are required. Course names must be unique.</div>
-          </form>
-        </div>
-      </div>
-      <div class="col-xl-5">
-        <div class="panel glass h-100">
-          <h2 class="section-title">GPA rubric</h2>
-          <div class="section-note mt-1 mb-3">Grade to grade-point conversion (4.0 scale)</div>
-          <div class="row g-2 rubric">
-            <div class="col-6"><div class="cell"><span>A &middot; 90-100</span><strong>4.0</strong></div></div>
-            <div class="col-6"><div class="cell"><span>B &middot; 80-89</span><strong>3.0</strong></div></div>
-            <div class="col-6"><div class="cell"><span>C &middot; 70-79</span><strong>2.0</strong></div></div>
-            <div class="col-6"><div class="cell"><span>D &middot; 60-69</span><strong>1.0</strong></div></div>
-            <div class="col-6"><div class="cell"><span>F &middot; 0-59</span><strong>0.0</strong></div></div>
-          </div>
-          <div class="section-note mt-3">GPA = sum of (grade points &times; credits) &divide; total credits.</div>
-        </div>
-      </div>
-    </section>
 
-    <div class="footer-note">StudyHub &middot; Learn with purpose, grow with confidence.</div>
-  </main>
-</div>
-<div id="toast" class="toast-msg" role="status" aria-live="polite"></div>
-
-  
-    
-     
-   
-  </main>
-</div>
-<div id="toast" class="toast-msg" role="status" aria-live="polite"></div>
+            <p class="grade-storage-note" id="storageNote">Saved in this browser, on this device. Not synced to an account.</p>
+            <p class="grade-notice" id="dataNotice" role="status" aria-live="polite"></p>
         </main>
 
-        <!-- footer -->
+        <!-- Shared footer -->
         <footer class="footer">
             <div class="footer-grid">
                 <div class="footer-brand">
                     <img src="../images/scholara-logo-dark.svg" alt="Scholara">
                     <p>A calm place for students to plan tasks, focus, track grades and keep notes.</p>
                 </div>
+
                 <div>
                     <h4>Pages</h4>
                     <ul>
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="tasks.html">Tasks</a></li>
-                    <li><a href="timer.html">Timer</a></li>
-                    <li><a href="grades.html">Grades</a></li>
-                    <li><a href="notes.html">Notes</a></li>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="tasks.html">Tasks</a></li>
+                        <li><a href="timer.html">Timer</a></li>
+                        <li><a href="grades.html">Grades</a></li>
+                        <li><a href="notes.html">Notes</a></li>
                     </ul>
                 </div>
+
                 <div>
                     <h4>Team</h4>
                     <ul>
-                    <li>Sohaima - Home</li>
-                    <li>Elham - Tasks</li>
-                    <li>Shokoofeh - Timer</li>
-                    <li>Sahar - Grades</li>
-                    <li>Samira - Notes</li>
+                        <li>Sohaima - Home</li>
+                        <li>Elham - Tasks</li>
+                        <li>Shokoofeh - Timer</li>
+                        <li>Sahar - Grades</li>
+                        <li>Samira - Notes</li>
                     </ul>
                 </div>
+
                 <div>
                     <h4>Project</h4>
                     <ul>
                         <li><a href="#">GitHub repository</a></li>
                         <li><a href="#">README</a></li>
                     </ul>
+
                     <div class="footer-social">
                         <a href="#" aria-label="GitHub"><i class="ri-github-line"></i></a>
                         <a href="#" aria-label="Email"><i class="ri-mail-line"></i></a>
@@ -227,9 +331,13 @@
                     </div>
                 </div>
             </div>
+
             <div class="footer-bottom">&copy; 2026 Scholara. Built by our JavaScript class group.</div>
         </footer>
     </div>
+
+    <!-- One notification element only -->
+    <div class="grade-toast" id="toast" role="status" aria-live="polite"></div>
 
     <script src="../js/common.js"></script>
     <script src="../js/grades.js"></script>

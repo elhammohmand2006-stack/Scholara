@@ -1,0 +1,674 @@
+/* =========================================
+   SCHOLARA — GRADES VISUAL REFRESH
+   Load AFTER style.css, glass.css and grades.css.
+   Keep the current grades.html and grades.js.
+========================================= */
+
+/* =========================================
+   1. THEME-AWARE PALETTE
+========================================= */
+
+.grades-page {
+    --grades-surface: rgba(255, 255, 255, 0.57);
+    --grades-border: rgba(255, 255, 255, 0.85);
+    --grades-field: rgba(255, 255, 255, 0.51);
+    --grades-line: rgba(47, 65, 86, 0.10);
+    --grades-shadow: 0 12px 36px rgba(47, 65, 86, 0.055);
+
+    --grade-purple: #8370b0;
+    --grade-purple-soft: rgba(160, 139, 202, 0.12);
+    --grade-blue-soft: rgba(133, 174, 204, 0.13);
+    --grade-green-soft: rgba(123, 172, 149, 0.12);
+    --grade-peach-soft: rgba(224, 159, 91, 0.12);
+
+    --grade-ring-track: rgba(131, 112, 176, 0.13);
+    --grade-ring-face: #f7f4fa;
+    --grade-status-wash: rgba(196, 178, 227, 0.18);
+    --grade-status-shadow: 0 16px 42px rgba(113, 95, 148, 0.08);
+
+    max-width: 1500px;
+}
+
+[data-theme="dark"] .grades-page {
+    --grades-surface: rgba(28, 43, 59, 0.70);
+    --grades-border: rgba(215, 226, 241, 0.12);
+    --grades-field: rgba(214, 226, 245, 0.045);
+    --grades-line: rgba(215, 226, 241, 0.10);
+    --grades-shadow: 0 14px 38px rgba(0, 0, 0, 0.13);
+
+    --grade-purple: #baa5eb;
+    --grade-purple-soft: rgba(170, 144, 220, 0.13);
+    --grade-blue-soft: rgba(127, 166, 187, 0.12);
+    --grade-green-soft: rgba(125, 191, 159, 0.10);
+    --grade-peach-soft: rgba(240, 176, 107, 0.10);
+
+    --grade-ring-track: rgba(186, 165, 235, 0.14);
+    --grade-ring-face: #223044;
+    --grade-status-wash: rgba(154, 123, 201, 0.13);
+    --grade-status-shadow: 0 16px 42px rgba(0, 0, 0, 0.16);
+}
+
+/* =========================================
+   2. SOFTER PAGE HEADING
+========================================= */
+
+.grades-heading {
+    margin-bottom: 30px;
+}
+
+.grades-heading h1 {
+    font-size: clamp(2.15rem, 3.5vw, 3.15rem);
+    letter-spacing: -0.055em;
+}
+
+.grades-heading > div > .grades-eyebrow {
+    color: var(--grade-purple);
+    letter-spacing: 0.17em;
+    font-size: 0.6rem;
+}
+
+.grades-heading-badge {
+    padding: 11px 15px;
+    background: var(--grades-surface);
+    border: 1px solid var(--grades-border);
+    box-shadow: 0 4px 14px rgba(47, 65, 86, 0.025);
+}
+
+.grades-heading-badge i {
+    color: var(--grade-purple);
+    font-size: 17px;
+}
+
+/* =========================================
+   3. SUMMARY CARDS
+========================================= */
+
+.grades-summary {
+    gap: 15px;
+    margin-bottom: 24px;
+}
+
+.grade-stat {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding: 20px 22px;
+    border-radius: 23px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.grade-stat::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+        ellipse at 100% 0%,
+        var(--grade-purple-soft),
+        transparent 75%
+    );
+    pointer-events: none;
+}
+
+.grade-stat:nth-child(2)::before {
+    background: radial-gradient(ellipse at 100% 0%, var(--grade-blue-soft), transparent 75%);
+}
+
+.grade-stat:nth-child(3)::before {
+    background: radial-gradient(ellipse at 100% 0%, var(--grade-green-soft), transparent 75%);
+}
+
+.grade-stat:nth-child(4)::before {
+    background: radial-gradient(ellipse at 100% 0%, var(--grade-peach-soft), transparent 75%);
+}
+
+.grade-stat:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px rgba(47, 65, 86, 0.085);
+}
+
+.grade-stat-head {
+    align-items: center;
+}
+
+.grade-stat-head h2 {
+    font-size: 0.72rem;
+    line-height: 1.5;
+}
+
+.grade-stat > strong {
+    margin-top: 17px;
+    font-size: 2.1rem;
+    letter-spacing: -0.055em;
+    font-weight: 600;
+}
+
+.grade-stat > .grade-standing-value {
+    min-height: 1.8em;
+    padding-top: 5px;
+    font-size: 1.25rem;
+}
+
+.grade-stat .grade-stat-icon {
+    background: var(--grade-purple-soft);
+    color: var(--grade-purple);
+    border: none;
+}
+
+.grade-stat:nth-child(2) .grade-stat-icon {
+    background: var(--grade-blue-soft);
+    color: var(--muted);
+}
+
+.grade-stat:nth-child(3) .grade-stat-icon {
+    background: var(--grade-green-soft);
+    color: var(--success);
+}
+
+.grade-stat:nth-child(4) .grade-stat-icon {
+    background: var(--grade-peach-soft);
+    color: var(--accent);
+}
+
+/* =========================================
+   4. CONTENT LAYOUT
+   Do not stretch the empty course table.
+========================================= */
+
+.grades-main-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(265px, 0.44fr);
+    align-items: start;
+    gap: 22px;
+}
+
+.grades-bottom-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 22px;
+}
+
+.grade-panel {
+    position: relative;
+    min-width: 0;
+    padding: 25px;
+    border-radius: 25px;
+}
+
+.grade-section-heading h2 {
+    font-size: 1.23rem;
+}
+
+.grade-section-heading p {
+    font-size: 0.71rem;
+}
+
+.grade-sort select {
+    padding: 9px 10px;
+    font-size: 0.69rem;
+}
+
+/* =========================================
+   5. THEME-AWARE PROGRESS CARD
+   Replaces the fixed navy panel in both themes.
+========================================= */
+
+.grades-page .grade-status {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    padding: 25px;
+
+    background: var(--grades-surface);
+    color: var(--text);
+    border: 1px solid var(--grades-border);
+    border-radius: 25px;
+    box-shadow: var(--grade-status-shadow);
+
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+}
+
+.grade-status::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+        ellipse at 50% 35%,
+        var(--grade-status-wash),
+        transparent 75%
+    );
+    pointer-events: none;
+}
+
+.grades-page .grade-status .grades-eyebrow {
+    margin-bottom: 10px;
+    color: var(--grade-purple);
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+}
+
+.grades-page .grade-status h2 {
+    color: var(--text);
+    font-size: 1.4rem;
+    line-height: 1.25;
+    letter-spacing: -0.035em;
+}
+
+.grades-page .grade-status-text {
+    min-height: 0;
+    margin: 12px 0 24px;
+    color: var(--muted);
+    font-size: 0.73rem;
+    line-height: 1.85;
+}
+
+.grades-page .grade-ring {
+    width: 164px;
+    height: 164px;
+    margin: 0 auto 20px;
+    background: conic-gradient(
+        from -90deg,
+        var(--grade-purple) calc(var(--p) * 1%),
+        var(--grade-ring-track) 0
+    );
+    box-shadow:
+        0 0 0 8px var(--grade-purple-soft),
+        0 14px 28px rgba(113, 95, 148, 0.055);
+}
+
+.grades-page .grade-ring::before {
+    inset: 7px;
+    background: var(--grade-ring-face);
+    border: 1px solid var(--grades-border);
+}
+
+.grades-page .grade-ring-copy strong {
+    color: var(--text);
+    font-size: 2.35rem;
+    font-weight: 600;
+    letter-spacing: -0.065em;
+}
+
+.grades-page .grade-ring-copy span {
+    margin-top: 7px;
+    color: var(--muted);
+    font-size: 0.65rem;
+}
+
+.grade-chip-wrap {
+    margin-bottom: 18px;
+}
+
+.grades-page .grade-chip {
+    background: var(--grade-purple-soft);
+    color: var(--grade-purple);
+    border: 1px solid var(--grades-border);
+    padding: 6px 12px;
+    font-size: 0.64rem;
+}
+
+.grades-page .grade-mini-stats > div {
+    gap: 12px;
+    padding: 11px 0;
+    border-color: var(--grades-line);
+    font-size: 0.72rem;
+}
+
+.grades-page .grade-mini-stats dt {
+    color: var(--muted);
+}
+
+.grades-page .grade-mini-stats dd {
+    color: var(--text);
+}
+
+.grades-page .grade-status-footnote {
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: 0.58rem;
+    line-height: 1.8;
+}
+
+/* =========================================
+   6. EMPTY STATE AND TABLE
+========================================= */
+
+.grade-empty {
+    position: relative;
+    padding: 38px 18px 45px;
+    border: 1px dashed var(--grades-line);
+    border-radius: 18px;
+    background: linear-gradient(
+        140deg,
+        var(--grade-blue-soft),
+        transparent 65%
+    );
+}
+
+.grade-empty > i {
+    display: grid;
+    place-items: center;
+    width: 62px;
+    height: 62px;
+    margin: 0 auto 19px;
+    background: var(--grade-purple-soft);
+    border: 1px solid var(--grades-border);
+    border-radius: 20px;
+    color: var(--grade-purple);
+    font-size: 28px;
+    transform: rotate(-7deg);
+}
+
+.grade-empty h3 {
+    font-size: 1.2rem;
+    line-height: 1.45;
+}
+
+.grade-empty p {
+    max-width: 34ch;
+    margin-inline: auto;
+    font-size: 0.73rem;
+    line-height: 1.8;
+}
+
+.grade-table th {
+    padding-block: 13px;
+    font-size: 0.65rem;
+}
+
+.grade-table td {
+    padding-block: 15px;
+    font-size: 0.76rem;
+}
+
+.grade-course-initials {
+    background: var(--grade-blue-soft);
+    border-color: transparent;
+}
+
+.grade-letter {
+    border: 1px solid var(--grades-border);
+}
+
+.grade-icon-button {
+    border-color: transparent;
+    background: var(--grades-field);
+}
+
+/* =========================================
+   7. FORM AND RUBRIC DETAILS
+========================================= */
+
+.grade-field input {
+    padding: 12px 13px;
+    background: var(--grades-field);
+    border-color: var(--grades-line);
+    border-radius: 12px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.grade-field input:focus {
+    border-color: var(--grade-purple);
+    box-shadow: 0 0 0 3px var(--grade-purple-soft);
+}
+
+.grade-field input[aria-invalid="true"] {
+    border-color: var(--danger);
+}
+
+.grade-form-actions {
+    margin-top: 8px;
+}
+
+.grade-form-actions > p {
+    font-size: 0.63rem;
+    line-height: 1.8;
+}
+
+.grade-button-primary {
+    padding: 12px 18px;
+    border-radius: 13px;
+    box-shadow: 0 5px 14px rgba(224, 159, 91, 0.15);
+}
+
+.grade-rubric {
+    gap: 8px;
+}
+
+.grade-rubric > div {
+    align-items: center;
+    padding: 10px 12px;
+    border: 1px solid var(--grades-border);
+    border-radius: 12px;
+    font-size: 0.7rem;
+}
+
+.grade-rubric > div strong {
+    display: inline-grid;
+    place-items: center;
+    min-width: 35px;
+    padding: 4px 6px;
+    background: var(--grade-purple-soft);
+    border-radius: 8px;
+    color: var(--grade-purple);
+    font-size: 0.68rem;
+}
+
+.grade-rubric > div:first-child strong {
+    background: var(--grade-green-soft);
+    color: var(--success);
+}
+
+.grade-rubric > div:last-child strong {
+    background: var(--grade-peach-soft);
+    color: var(--text);
+}
+
+.grade-formula {
+    padding: 10px 12px;
+    background: var(--grade-blue-soft);
+    border-radius: 10px;
+    font-size: 0.65rem;
+}
+
+/* =========================================
+   8. DESKTOP DASHBOARD COMPOSITION
+   Sidebar card spans both content rows.
+   The form sits under the table, not under
+   a large stretched empty table panel.
+========================================= */
+
+@media (min-width: 1201px) {
+    .grades-page {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(275px, 0.43fr);
+        column-gap: 22px;
+        align-content: start;
+        align-items: start;
+    }
+
+    .grades-heading {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .grades-summary {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .grades-main-grid,
+    .grades-bottom-grid {
+        display: contents;
+    }
+
+    .grades-main-grid > .grade-panel {
+        grid-column: 1;
+        grid-row: 3;
+        margin-bottom: 22px;
+    }
+
+    .grades-main-grid > .grade-status {
+        grid-column: 2;
+        grid-row: 3 / span 2;
+    }
+
+    .grades-bottom-grid > .grade-panel:first-child {
+        grid-column: 1;
+        grid-row: 4;
+        margin-bottom: 22px;
+    }
+
+    .grades-bottom-grid > .grade-panel:last-child {
+        grid-column: 1 / -1;
+        grid-row: 5;
+    }
+
+    .grade-rubric {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .grade-rubric > div {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 12px;
+        min-width: 0;
+        font-size: 0.63rem;
+    }
+
+    .grade-storage-note {
+        grid-column: 1 / -1;
+        grid-row: 6;
+    }
+
+    .grade-notice {
+        grid-column: 1 / -1;
+        grid-row: 7;
+    }
+}
+
+/* =========================================
+   9. TABLET AND MOBILE
+========================================= */
+
+@media (min-width: 701px) and (max-width: 1200px) {
+    .grades-main-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(235px, 0.54fr);
+        align-items: start;
+    }
+
+    .grades-bottom-grid {
+        grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
+    }
+
+    .grade-panel,
+    .grades-page .grade-status {
+        padding: 21px;
+    }
+
+    .grades-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .grades-main-grid,
+    .grades-bottom-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    .grades-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 17px;
+    }
+
+    .grades-heading h1 {
+        font-size: 2.2rem;
+    }
+
+    .grades-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .grade-stat {
+        padding: 17px 15px;
+    }
+
+    .grade-stat > strong {
+        font-size: 1.8rem;
+    }
+
+    .grade-stat > .grade-standing-value {
+        font-size: 1.08rem;
+    }
+
+    .grades-page .grade-status {
+        padding: 24px;
+    }
+
+    .grade-status h2,
+    .grade-status > .grades-eyebrow,
+    .grade-status-text {
+        text-align: center;
+    }
+
+    .grade-status-text {
+        max-width: 38ch;
+        margin-inline: auto;
+    }
+
+    .grades-page .grade-ring {
+        margin-top: 24px;
+        margin-bottom: 23px;
+    }
+
+    .grade-panel {
+        padding: 21px 17px;
+    }
+
+    .grade-empty {
+        padding: 30px 15px;
+    }
+
+    .grade-rubric {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grade-rubric > div {
+        flex-wrap: wrap;
+        gap: 8px;
+        font-size: 0.64rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .grades-summary,
+    .grade-rubric {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* =========================================
+   10. FALLBACKS AND MOTION PREFERENCE
+========================================= */
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .grades-page .grade-status,
+    .grades-page .grades-glass {
+        background: var(--card);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .grades-page *,
+    .grades-page *::before,
+    .grades-page *::after {
+        transition: none !important;
+        animation: none !important;
+    }
+}
