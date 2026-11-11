@@ -22,8 +22,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css">
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/tasks.css">
     <link rel="stylesheet" href="../css/glass.css">
+    <link rel="stylesheet" href="../css/tasks.css">
 </head>
 <body>
     <!-- top bar (only small screens) -->
@@ -59,13 +59,171 @@
                     <i class="ri-moon-line moon"></i>
                     <span class="thumb"></span>
                 </button>
+            </div>
+            <p class="side-note">JavaScript group project</p>
+        </div>
     </aside>
 
     <div class="overlay" id="overlay"></div>
 
     <div class="main">
         <main class="content">
+            <!-- title -->
+            <div class="page-head tasks-head">
+                <div>
+                    <h1>Tasks</h1>
+                    <p id="greeting"></p>
+                </div>
+                <a href="#task-form" class="btn btn-accent"><i class="ri-add-line"></i> New task</a>
+            </div>
 
+            <!-- numbers -->
+            <section class="stats">
+                <article class="stat-card">
+                    <span class="stat-icon"><i class="ri-stack-line"></i></span>
+                    <div><strong id="stat-total">0</strong><span>Total tasks</span></div>
+                </article>
+                <article class="stat-card is-success">
+                    <span class="stat-icon"><i class="ri-checkbox-circle-line"></i></span>
+                    <div><strong id="stat-done">0</strong><span>Completed</span></div>
+                </article>
+                <article class="stat-card is-pending">
+                    <span class="stat-icon"><i class="ri-time-line"></i></span>
+                    <div><strong id="stat-pending">0</strong><span>In progress</span></div>
+                </article>
+                <article class="stat-card is-danger">
+                    <span class="stat-icon"><i class="ri-alarm-warning-line"></i></span>
+                    <div><strong id="stat-overdue">0</strong><span>Overdue</span></div>
+                </article>
+            </section>
+
+            <!-- dashboard cards -->
+            <section class="dash">
+                <article class="dash-card hero-card">
+                    <h2>Completion rate</h2>
+                    <div class="ring">
+                        <svg viewBox="0 0 140 140" aria-hidden="true">
+                            <circle class="ring-track" cx="70" cy="70" r="52"></circle>
+                            <circle class="ring-bar" id="ring-bar" cx="70" cy="70" r="52"></circle>
+                        </svg>
+                        <div class="ring-center"><strong id="ring-percent">0%</strong></div>
+                    </div>
+                    <p class="ring-message" id="ring-message"></p>
+                    <p class="ring-sub" id="ring-sub"></p>
+                </article>
+
+                <article class="dash-card">
+                    <div class="card-head">
+                        <h2>Completed this week</h2>
+                        <span class="muted" id="week-total"></span>
+                    </div>
+                    <div class="bars" id="week-chart"></div>
+                </article>
+
+                <article class="dash-card">
+                    <h2>Open tasks by priority</h2>
+                    <div class="prio-list" id="priority-list"></div>
+                </article>
+            </section>
+
+            <!-- progress by subject -->
+            <section class="dash-card subjects-card">
+                <div class="card-head">
+                    <h2>Progress by subject</h2>
+                    <span class="muted" id="subject-note"></span>
+                </div>
+                <div class="subject-rings" id="subject-rings"></div>
+            </section>
+
+            <!-- form and list -->
+            <section class="workspace">
+                <form class="dash-card form-card" id="task-form" novalidate>
+                    <h2 id="form-title">Add a task</h2>
+
+                    <div class="field">
+                        <label for="title">Task title</label>
+                        <input type="text" id="title" placeholder="Example: Finish math homework" maxlength="80" autocomplete="off">
+                        <p class="error-text"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="subject">Subject</label>
+                        <select id="subject">
+                            <option value="">Choose a subject</option>
+                            <option>Math</option>
+                            <option>Physics</option>
+                            <option>Chemistry</option>
+                            <option>Biology</option>
+                            <option>English</option>
+                            <option>JavaScript</option>
+                            <option>History</option>
+                            <option>Other</option>
+                        </select>
+                        <p class="error-text"></p>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field">
+                            <label for="priority">Priority</label>
+                            <select id="priority">
+                                <option value="high">High</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="low">Low</option>
+                            </select>
+                            <p class="error-text"></p>
+                        </div>
+                        <div class="field">
+                            <label for="due">Due date</label>
+                            <input type="date" id="due">
+                            <p class="error-text"></p>
+                        </div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button class="btn" type="submit" id="submit-btn">Add task</button>
+                        <button class="btn-ghost" type="button" id="cancel-btn" hidden>Cancel</button>
+                    </div>
+                </form>
+
+                <div class="dash-card list-card">
+                    <div class="toolbar">
+                        <div class="search-box">
+                            <i class="ri-search-line"></i>
+                            <input type="search" id="search-input" placeholder="Search tasks..." aria-label="Search tasks">
+                        </div>
+                        <select id="priority-filter" aria-label="Filter by priority">
+                            <option value="all">All priorities</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                        <select id="sort-select" aria-label="Sort tasks">
+                            <option value="due">Sort: due date</option>
+                            <option value="priority">Sort: priority</option>
+                            <option value="name">Sort: name</option>
+                            <option value="newest">Sort: newest</option>
+                        </select>
+                    </div>
+
+                    <div class="tabs" id="tabs">
+                        <button class="tab active" data-filter="all">All <span id="count-all">0</span></button>
+                        <button class="tab" data-filter="active">Active <span id="count-active">0</span></button>
+                        <button class="tab" data-filter="done">Done <span id="count-done">0</span></button>
+                    </div>
+
+                    <ul class="task-list" id="task-list"></ul>
+
+                    <div class="empty" id="empty" hidden>
+                        <i class="ri-inbox-line"></i>
+                        <p>No tasks here yet.</p>
+                    </div>
+
+                    <div class="list-foot">
+                        <span id="list-count"></span>
+                        <button class="link-btn" id="clear-done" type="button">Clear completed</button>
+                    </div>
+                </div>
+            </section>
         </main>
 
         <!-- footer -->
