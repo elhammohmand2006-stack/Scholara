@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scholara - Notes</title>
+    <title>Scholara — Notes</title>
     <link rel="icon" type="image/svg+xml" href="../images/scholara-icon.svg">
 
-    <!-- choose the theme before the page shows (no flash): saved choice, or the device setting -->
     <script>
-        (function () {
-            var saved = localStorage.getItem('theme');
-            var deviceDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (saved === 'dark' || (!saved && deviceDark)) {
-                document.documentElement.setAttribute('data-theme', 'dark');
+        try {
+            const saved = localStorage.getItem("theme");
+            const deviceDark = matchMedia("(prefers-color-scheme: dark)").matches;
+
+            if (saved === "dark" || (!saved && deviceDark)) {
+                document.documentElement.dataset.theme = "dark";
             }
-        })();
+        } catch (error) {
+            // The page still works when storage is unavailable.
+        }
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,20 +24,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css">
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/notes.css">
     <link rel="stylesheet" href="../css/glass.css">
+    <link rel="stylesheet" href="../css/notes.css">
 </head>
+
 <body>
-    <!-- top bar (only small screens) -->
+    <!-- Shared navigation: controlled by your existing common.js -->
     <div class="topbar">
-        <button id="menu-btn" aria-label="Open menu"><i class="ri-menu-line"></i></button>
+        <button id="menu-btn" aria-label="Open menu">
+            <i class="ri-menu-line" aria-hidden="true"></i>
+        </button>
         <img src="../images/scholara-icon.svg" alt="Scholara">
-        <span style="width:26px"></span>
+        <span style="width: 26px"></span>
     </div>
 
-    <!-- sidebar -->
     <aside class="sidebar" id="sidebar">
-        <button class="sidebar-close" id="sidebar-close" aria-label="Close menu"><i class="ri-close-line"></i></button>
+        <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">
+            <i class="ri-close-line" aria-hidden="true"></i>
+        </button>
 
         <a href="../index.html" class="sidebar-logo">
             <img src="../images/scholara-logo-light.svg" alt="Scholara" class="logo-light">
@@ -43,58 +49,181 @@
         </a>
 
         <p class="side-label">MENU</p>
-        <nav class="side-nav">
-                <a href="../index.html" class="side-link"><i class="ri-home-4-line"></i>Home</a>
-                <a href="tasks.html" class="side-link"><i class="ri-checkbox-circle-line"></i>Tasks</a>
-                <a href="timer.html" class="side-link"><i class="ri-timer-line"></i>Timer</a>
-                <a href="grades.html" class="side-link"><i class="ri-calculator-line"></i>Grades</a>
-                <a href="notes.html" class="side-link active" aria-current="page"><i class="ri-sticky-note-line"></i>Notes</a>
+        <nav class="side-nav" aria-label="Main navigation">
+            <a href="../index.html" class="side-link">
+                <i class="ri-home-4-line" aria-hidden="true"></i>
+                Home
+            </a>
+
+            <a href="tasks.html" class="side-link">
+                <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
+                Tasks
+            </a>
+
+            <a href="timer.html" class="side-link">
+                <i class="ri-timer-line" aria-hidden="true"></i>
+                Timer
+            </a>
+
+            <a href="grades.html" class="side-link">
+                <i class="ri-calculator-line" aria-hidden="true"></i>
+                Grades
+            </a>
+
+            <a href="notes.html" class="side-link active" aria-current="page">
+                <i class="ri-sticky-note-line" aria-hidden="true"></i>
+                Notes
+            </a>
+
         </nav>
 
         <div class="side-bottom">
             <div class="theme-row">
                 <span class="theme-label">Theme</span>
                 <button class="theme-switch" id="theme-btn" role="switch" aria-checked="false" aria-label="Dark mode">
-                    <i class="ri-sun-line sun"></i>
-                    <i class="ri-moon-line moon"></i>
+                    <i class="ri-sun-line sun" aria-hidden="true"></i>
+                    <i class="ri-moon-line moon" aria-hidden="true"></i>
                     <span class="thumb"></span>
                 </button>
+            </div>
+        </div>
     </aside>
 
     <div class="overlay" id="overlay"></div>
 
     <div class="main">
-        <main class="content">
+        <main class="content notes-page">
+            <!-- Page heading -->
+            <header class="notes-heading">
+                <div>
+                    <p class="notes-eyebrow">A LITTLE SPACE FOR BIG IDEAS</p>
+                    <h1>Good thoughts.<br>A place to keep them.</h1>
+                    <p class="notes-description">From lecture takeaways to your next lightbulb moment.</p>
+                </div>
 
+                <button class="notes-primary" id="new-note" type="button">
+                    <i class="ri-add-line" aria-hidden="true"></i>
+                    Create a note
+                </button>
+            </header>
+
+            <!-- Welcome panel -->
+            <section class="notes-welcome notes-glass" aria-labelledby="welcome-title">
+                <div class="welcome-copy">
+                    <span class="welcome-badge">
+                        <i class="ri-sparkling-line" aria-hidden="true"></i>
+                        YOUR PERSONAL KNOWLEDGE CORNER
+                    </span>
+                    <h2 id="welcome-title">Collect ideas. Connect the dots.</h2>
+                    <p>A quiet home for everything you’re learning. Make a note today; thank yourself tomorrow.</p>
+                    <div class="welcome-stats">
+                        <span><strong id="total-count">0</strong> notes collected</span>
+                        <span><strong id="pinned-count">0</strong> pinned for later</span>
+                    </div>
+                </div>
+
+                <div class="notebook-art" aria-hidden="true">
+                    <span class="art-spark art-spark-one">✦</span>
+                    <span class="art-spark art-spark-two">✧</span>
+                    <div class="art-back"></div>
+                    <div class="art-paper">
+                        <span class="art-label">a thought worth keeping</span>
+                        <span class="art-line"></span>
+                        <span class="art-line"></span>
+                        <span class="art-line short"></span>
+                        <span class="art-heart">♡</span>
+                    </div>
+                    <div class="art-pencil"></div>
+                </div>
+            </section>
+
+            <!-- Search and sorting -->
+            <section class="notes-library" aria-labelledby="library-title">
+                <div class="library-heading">
+                    <div>
+                        <p class="notes-eyebrow">YOUR IDEAS, WITH A LITTLE ORDER</p>
+                        <h2 id="library-title">My notebook</h2>
+                    </div>
+                    <span id="result-count" class="result-count"></span>
+                </div>
+
+                <div class="notes-toolbar">
+                    <label class="notes-search">
+                        <i class="ri-search-line" aria-hidden="true"></i>
+                        <input id="note-search" type="search" placeholder="Search titles, notes, or tags…" aria-label="Search notes" maxlength="200">
+                    </label>
+
+                    <label class="notes-sort">
+                        <span class="sr-only">Sort notes</span>
+                        <i class="ri-sort-desc" aria-hidden="true"></i>
+                        <select id="note-sort">
+                            <option value="updated">Recently edited</option>
+                            <option value="created">Newest first</option>
+                            <option value="title">Title A–Z</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="notes-filters" role="group" aria-label="Filter notes">
+                    <button class="filter-button is-active" data-filter="all" aria-pressed="true">All notes</button>
+                    <button class="filter-button" data-filter="pinned" aria-pressed="false">
+                        <i class="ri-pushpin-line" aria-hidden="true"></i>
+                        Pinned
+                    </button>
+                    <button class="filter-button" data-filter="Lecture" aria-pressed="false">Lecture</button>
+                    <button class="filter-button" data-filter="Revision" aria-pressed="false">Revision</button>
+                    <button class="filter-button" data-filter="Ideas" aria-pressed="false">Ideas</button>
+                    <button class="filter-button" data-filter="Personal" aria-pressed="false">Personal</button>
+                </div>
+
+                <div id="notes-grid" class="notes-grid"></div>
+
+                <div id="notes-empty" class="notes-empty notes-glass" hidden>
+                    <span class="empty-icon"><i class="ri-quill-pen-line" aria-hidden="true"></i></span>
+                    <h3 id="empty-title">Your next idea starts here.</h3>
+                    <p id="empty-description">Save a lecture takeaway, a question, or something you don’t want to forget.</p>
+                    <button class="notes-primary" id="empty-create" type="button">Write your first note</button>
+                </div>
+            </section>
+
+            <p class="notes-storage-note">
+                <i class="ri-hard-drive-2-line" aria-hidden="true"></i>
+                Saved in this browser, on this device. Not synced to an account.
+            </p>
+
+            <p id="notes-status" class="notes-status" role="status" aria-live="polite"></p>
         </main>
 
-        <!-- footer -->
+        <!-- Shared footer -->
         <footer class="footer">
             <div class="footer-grid">
                 <div class="footer-brand">
                     <img src="../images/scholara-logo-dark.svg" alt="Scholara">
                     <p>A calm place for students to plan tasks, focus, track grades and keep notes.</p>
                 </div>
+
                 <div>
                     <h4>Pages</h4>
                     <ul>
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="tasks.html">Tasks</a></li>
-                    <li><a href="timer.html">Timer</a></li>
-                    <li><a href="grades.html">Grades</a></li>
-                    <li><a href="notes.html">Notes</a></li>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="tasks.html">Tasks</a></li>
+                        <li><a href="timer.html">Timer</a></li>
+                        <li><a href="grades.html">Grades</a></li>
+                        <li><a href="notes.html">Notes</a></li>
                     </ul>
                 </div>
+
                 <div>
                     <h4>Team</h4>
                     <ul>
-                    <li>Sohaima - Home</li>
-                    <li>Elham - Tasks</li>
-                    <li>Shokoofeh - Timer</li>
-                    <li>Sahar - Grades</li>
-                    <li>Samira - Notes</li>
+                        <li>Sohaime - Home</li>
+                        <li>Elham - Tasks</li>
+                        <li>Shokoofeh - Timer</li>
+                        <li>Sahar - Grades</li>
+                        <li>Samira - Notes</li>
                     </ul>
                 </div>
+
                 <div>
                     <h4>Project</h4>
                     <ul>
@@ -108,9 +237,84 @@
                     </div>
                 </div>
             </div>
+
             <div class="footer-bottom">&copy; 2026 Scholara. Built by our JavaScript class group.</div>
         </footer>
     </div>
+
+    <!-- Note editor: native dialog -->
+    <dialog class="note-dialog" id="note-dialog" aria-labelledby="editor-title">
+        <form id="note-form">
+            <div class="editor-heading">
+                <div>
+                    <p class="notes-eyebrow">A THOUGHT WORTH KEEPING</p>
+                    <h2 id="editor-title">Create a note</h2>
+                </div>
+                <button type="button" class="note-icon-button" id="close-editor" aria-label="Close editor">
+                    <i class="ri-close-line" aria-hidden="true"></i>
+                </button>
+            </div>
+
+            <label class="editor-label" for="note-title">Title</label>
+            <input class="editor-input" id="note-title" type="text" placeholder="Give your idea a name…" maxlength="100" required dir="auto">
+
+            <div class="editor-meta">
+                <div>
+                    <label class="editor-label" for="note-category">Notebook</label>
+                    <select class="editor-input" id="note-category">
+                        <option value="Lecture">Lecture</option>
+                        <option value="Revision">Revision</option>
+                        <option value="Ideas">Ideas</option>
+                        <option value="Personal">Personal</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="editor-label" for="note-tags">Tags <span>(comma-separated)</span></label>
+                    <input class="editor-input" id="note-tags" type="text" placeholder="biology, chapter 2" maxlength="160" dir="auto">
+                </div>
+            </div>
+
+            <label class="editor-label" for="note-body">Your note</label>
+            <textarea class="editor-input editor-body" id="note-body" placeholder="Start with a thought. See where it takes you…" maxlength="20000" dir="auto"></textarea>
+
+            <div class="editor-bottom-line">
+                <fieldset class="color-picker">
+                    <legend>Note color</legend>
+                    <label class="color-choice" style="--swatch: #b5a3d7">
+                        <input type="radio" name="note-color" value="lavender" checked>
+                        <span></span><span class="sr-only">Lavender</span>
+                    </label>
+                    <label class="color-choice" style="--swatch: #a3c3df">
+                        <input type="radio" name="note-color" value="blue">
+                        <span></span><span class="sr-only">Blue</span>
+                    </label>
+                    <label class="color-choice" style="--swatch: #9bbca7">
+                        <input type="radio" name="note-color" value="sage">
+                        <span></span><span class="sr-only">Sage</span>
+                    </label>
+                    <label class="color-choice" style="--swatch: #dfb38a">
+                        <input type="radio" name="note-color" value="peach">
+                        <span></span><span class="sr-only">Peach</span>
+                    </label>
+                </fieldset>
+                <span class="word-count" id="word-count">0 words</span>
+            </div>
+
+            <p class="editor-error" id="editor-error" role="alert"></p>
+
+            <div class="editor-actions">
+                <label class="pin-checkbox"><input type="checkbox" id="note-pinned"> Pin this note</label>
+                <div>
+                    <button class="notes-secondary" id="cancel-editor" type="button">Cancel</button>
+                    <button class="notes-primary" type="submit">
+                        <i class="ri-check-line" aria-hidden="true"></i>
+                        Save note
+                    </button>
+                </div>
+            </div>
+        </form>
+    </dialog>
 
     <script src="../js/common.js"></script>
     <script src="../js/notes.js"></script>
