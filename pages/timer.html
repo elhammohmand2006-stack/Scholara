@@ -3,39 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scholara - Timer</title>
+    <title>Scholara — Focus Timer</title>
     <link rel="icon" type="image/svg+xml" href="../images/scholara-icon.svg">
 
-    <!-- choose the theme before the page shows (no flash): saved choice, or the device setting -->
     <script>
-        (function () {
-            var saved = localStorage.getItem('theme');
-            var deviceDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (saved === 'dark' || (!saved && deviceDark)) {
-                document.documentElement.setAttribute('data-theme', 'dark');
+        try {
+            const saved = localStorage.getItem("theme");
+            const deviceDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+            if (saved === "dark" || (!saved && deviceDark)) {
+                document.documentElement.setAttribute("data-theme", "dark");
             }
-        })();
+        } catch (error) {
+            // Continue if browser storage is unavailable.
+        }
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css">
+
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/timer.css">
     <link rel="stylesheet" href="../css/glass.css">
+    <link rel="stylesheet" href="../css/timer.css">
 </head>
+
 <body>
-    <!-- top bar (only small screens) -->
+    <!-- Mobile top bar -->
     <div class="topbar">
-        <button id="menu-btn" aria-label="Open menu"><i class="ri-menu-line"></i></button>
+        <button id="menu-btn" aria-label="Open menu">
+            <i class="ri-menu-line" aria-hidden="true"></i>
+        </button>
+
         <img src="../images/scholara-icon.svg" alt="Scholara">
-        <span style="width:26px"></span>
+        <span style="width: 26px"></span>
     </div>
 
-    <!-- sidebar -->
+    <!-- Shared sidebar -->
     <aside class="sidebar" id="sidebar">
-        <button class="sidebar-close" id="sidebar-close" aria-label="Close menu"><i class="ri-close-line"></i></button>
+        <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">
+            <i class="ri-close-line" aria-hidden="true"></i>
+        </button>
 
         <a href="../index.html" class="sidebar-logo">
             <img src="../images/scholara-logo-light.svg" alt="Scholara" class="logo-light">
@@ -43,64 +52,295 @@
         </a>
 
         <p class="side-label">MENU</p>
-        <nav class="side-nav">
-                <a href="../index.html" class="side-link"><i class="ri-home-4-line"></i>Home</a>
-                <a href="tasks.html" class="side-link"><i class="ri-checkbox-circle-line"></i>Tasks</a>
-                <a href="timer.html" class="side-link active" aria-current="page"><i class="ri-timer-line"></i>Timer</a>
-                <a href="grades.html" class="side-link"><i class="ri-calculator-line"></i>Grades</a>
-                <a href="notes.html" class="side-link"><i class="ri-sticky-note-line"></i>Notes</a>
+
+        <nav class="side-nav" aria-label="Main navigation">
+            <a href="../index.html" class="side-link">
+                <i class="ri-home-4-line" aria-hidden="true"></i>
+                Home
+            </a>
+
+            <a href="tasks.html" class="side-link">
+                <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
+                Tasks
+            </a>
+
+            <a href="timer.html" class="side-link active" aria-current="page">
+                <i class="ri-timer-line" aria-hidden="true"></i>
+                Timer
+            </a>
+
+            <a href="grades.html" class="side-link">
+                <i class="ri-calculator-line" aria-hidden="true"></i>
+                Grades
+            </a>
+
+            <a href="notes.html" class="side-link">
+                <i class="ri-sticky-note-line" aria-hidden="true"></i>
+                Notes
+            </a>
         </nav>
 
         <div class="side-bottom">
             <div class="theme-row">
                 <span class="theme-label">Theme</span>
+
                 <button class="theme-switch" id="theme-btn" role="switch" aria-checked="false" aria-label="Dark mode">
-                    <i class="ri-sun-line sun"></i>
-                    <i class="ri-moon-line moon"></i>
+                    <i class="ri-sun-line sun" aria-hidden="true"></i>
+                    <i class="ri-moon-line moon" aria-hidden="true"></i>
                     <span class="thumb"></span>
                 </button>
+            </div>
+        </div>
     </aside>
 
     <div class="overlay" id="overlay"></div>
 
     <div class="main">
-        <main class="content">
+        <main class="content focus-page">
+            <!-- Page heading -->
+            <header class="focus-heading">
+                <div class="heading-text">
+                    <p class="eyebrow">YOUR SPACE TO SLOW DOWN</p>
 
+                    <h1>
+                        A little focus.<br>
+                        A lot of possibility.
+                    </h1>
+
+                    <p class="heading-description">
+                        One task. One session. A little closer to your goals.
+                    </p>
+                </div>
+
+                <div class="date-pill">
+                    <i class="ri-calendar-line" aria-hidden="true"></i>
+                    <span id="today-date"></span>
+                </div>
+            </header>
+
+            <div class="focus-layout">
+                <!-- Timer card -->
+                <section class="focus-panel glass-panel" aria-labelledby="timer-title">
+                    <div class="panel-top">
+                        <div>
+                            <p class="eyebrow">MAKE ROOM FOR DEEP WORK</p>
+                            <h2 id="timer-title">Focus timer</h2>
+                        </div>
+
+                        <button type="button" class="icon-button" id="sound-btn" aria-label="Completion sound" aria-pressed="true" title="Toggle completion sound">
+                            <i class="ri-volume-up-line" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <div class="mode-picker" role="group" aria-label="Timer mode">
+                        <button type="button" class="mode-button is-active" data-mode="focus" aria-pressed="true">
+                            Focus
+                        </button>
+
+                        <button type="button" class="mode-button" data-mode="break" aria-pressed="false">
+                            Short break
+                        </button>
+                    </div>
+
+                    <!-- Circular progress -->
+                    <div class="timer-orbit">
+                        <div class="orbit-halo" aria-hidden="true"></div>
+
+                        <svg class="progress-ring" viewBox="0 0 320 320" aria-hidden="true">
+                            <circle class="ring-track" cx="160" cy="160" r="142"></circle>
+                            <circle class="ring-value" id="progress-circle" cx="160" cy="160" r="142"></circle>
+                        </svg>
+
+                        <div class="timer-face">
+                            <span class="timer-caption" id="mode-label">TIME TO FOCUS</span>
+
+                            <span id="timer-display" role="timer" aria-label="Time remaining" aria-live="off">
+                                25:00
+                            </span>
+
+                            <div class="timer-tag">
+                                <span class="status-dot" aria-hidden="true"></span>
+                                <span id="timer-state">Ready when you are</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Start / Pause / Reset -->
+                    <div class="timer-controls">
+                        <button type="button" class="secondary-button" id="reset-btn" aria-label="Reset timer" title="Reset">
+                            <i class="ri-restart-line" aria-hidden="true"></i>
+                        </button>
+
+                        <button type="button" class="start-button" id="start-btn">
+                            <i class="ri-play-fill" aria-hidden="true"></i>
+                            <span>Start session</span>
+                        </button>
+
+                        <button type="button" class="secondary-button" id="pause-btn" aria-label="Pause timer" title="Pause" disabled>
+                            <i class="ri-pause-fill" aria-hidden="true"></i>
+                        </button>
+                    </div>
+
+                    <p class="timer-message" id="timer-message" role="status" aria-live="polite">
+                        Your next small win starts here.
+                    </p>
+
+                    <form class="duration-form" id="duration-form">
+                        <label for="duration-input">
+                            <i class="ri-equalizer-line" aria-hidden="true"></i>
+                            Make it your own
+                        </label>
+
+                        <div class="duration-fields">
+                            <input type="number" id="duration-input" min="1" max="180" step="1" value="25" aria-label="Session duration in minutes" required>
+                            <span>min</span>
+
+                            <button type="submit">
+                                Apply
+                                <i class="ri-arrow-right-line" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <p class="tiny-note">
+                        Focus → break → repeat. Each new session starts when you do.
+                    </p>
+                </section>
+
+                <div class="focus-side">
+                    <!-- CSS illustration -->
+                    <section class="encouragement glass-panel" aria-labelledby="gentle-title">
+                        <div class="illustration" aria-hidden="true">
+                            <span class="cloud cloud-one"></span>
+                            <span class="cloud cloud-two"></span>
+
+                            <span class="spark spark-one">✦</span>
+                            <span class="spark spark-two">✧</span>
+
+                            <div class="clock-shadow"></div>
+                            <div class="clock-crown"></div>
+
+                            <div class="little-clock">
+                                <span class="clock-marks"></span>
+                                <span class="clock-hand hand-hour"></span>
+                                <span class="clock-hand hand-minute"></span>
+                                <span class="clock-pin"></span>
+                            </div>
+                        </div>
+
+                        <p class="eyebrow">A GENTLE REMINDER</p>
+                        <h2 id="gentle-title">Progress, not perfection.</h2>
+
+                        <p class="encouragement-text">
+                            You don’t have to do it all.<br>
+                            Just give this moment your attention.
+                        </p>
+
+                        <span class="quiet-badge">
+                            <i class="ri-leaf-line" aria-hidden="true"></i>
+                            A calmer way to study
+                        </span>
+                    </section>
+
+                    <!-- Today's statistics -->
+                    <section class="daily-section" aria-labelledby="daily-title">
+                        <div class="section-heading">
+                            <h2 id="daily-title">Today, at a glance</h2>
+                            <span class="live-label">Your progress</span>
+                        </div>
+
+                        <div class="daily-stats">
+                            <div class="stat-tile glass-panel">
+                                <span class="stat-icon">
+                                    <i class="ri-checkbox-circle-line" aria-hidden="true"></i>
+                                </span>
+
+                                <strong id="today-sessions">0</strong>
+                                <span class="stat-label">Sessions</span>
+                            </div>
+
+                            <div class="stat-tile glass-panel">
+                                <span class="stat-icon warm">
+                                    <i class="ri-time-line" aria-hidden="true"></i>
+                                </span>
+
+                                <strong id="today-minutes">0</strong>
+                                <span class="stat-label">Focus minutes</span>
+                            </div>
+
+                            <div class="stat-tile glass-panel">
+                                <span class="stat-icon green">
+                                    <i class="ri-cup-line" aria-hidden="true"></i>
+                                </span>
+
+                                <strong id="today-breaks">0</strong>
+                                <span class="stat-label">Breaks</span>
+                            </div>
+                        </div>
+
+                        <p class="tiny-note">
+                            Only completed sessions count. Every minute matters.
+                        </p>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Session history -->
+            <section class="history-panel glass-panel" aria-labelledby="history-title">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">SMALL STEPS, SAVED</p>
+                        <h2 id="history-title">Session history</h2>
+                    </div>
+
+                    <button type="button" class="text-button" id="clear-history">
+                        Clear history
+                        <i class="ri-delete-bin-line" aria-hidden="true"></i>
+                    </button>
+                </div>
+
+                <ul class="history-list" id="history-list"></ul>
+                <p class="tiny-note" id="storage-note" hidden></p>
+            </section>
         </main>
 
-        <!-- footer -->
+        <!-- Shared footer -->
         <footer class="footer">
             <div class="footer-grid">
                 <div class="footer-brand">
                     <img src="../images/scholara-logo-dark.svg" alt="Scholara">
                     <p>A calm place for students to plan tasks, focus, track grades and keep notes.</p>
                 </div>
+
                 <div>
                     <h4>Pages</h4>
                     <ul>
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="tasks.html">Tasks</a></li>
-                    <li><a href="timer.html">Timer</a></li>
-                    <li><a href="grades.html">Grades</a></li>
-                    <li><a href="notes.html">Notes</a></li>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="tasks.html">Tasks</a></li>
+                        <li><a href="timer.html">Timer</a></li>
+                        <li><a href="grades.html">Grades</a></li>
+                        <li><a href="notes.html">Notes</a></li>
                     </ul>
                 </div>
+
                 <div>
                     <h4>Team</h4>
                     <ul>
-                    <li>Sohaime - Home</li>
-                    <li>Elham - Tasks</li>
-                    <li>Shokoofeh - Timer</li>
-                    <li>Sahar - Grades</li>
-                    <li>Samira - Notes</li>
+                        <li>Sohaime - Home</li>
+                        <li>Elham - Tasks</li>
+                        <li>Shokoofeh - Timer</li>
+                        <li>Sahar - Grades</li>
+                        <li>Samira - Notes</li>
                     </ul>
                 </div>
+
                 <div>
                     <h4>Project</h4>
                     <ul>
                         <li><a href="#">GitHub repository</a></li>
                         <li><a href="#">README</a></li>
                     </ul>
+
                     <div class="footer-social">
                         <a href="#" aria-label="GitHub"><i class="ri-github-line"></i></a>
                         <a href="#" aria-label="Email"><i class="ri-mail-line"></i></a>
@@ -108,7 +348,10 @@
                     </div>
                 </div>
             </div>
-            <div class="footer-bottom">&copy; 2026 Scholara. Built by our JavaScript class group.</div>
+
+            <div class="footer-bottom">
+                &copy; 2026 Scholara. Built by our JavaScript class group.
+            </div>
         </footer>
     </div>
 
