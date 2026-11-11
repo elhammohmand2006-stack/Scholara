@@ -1,5 +1,4 @@
-/* grades page styles (only this page's owner edits this file) */
-:root{
+ :root{
       --navy:#2F4156; --teal:#567C8D; --sky:#C8D9E6; --beige:#F5EFEB;
       --accent:#E09F5B; --success:#3F8A6E; --danger:#C95D4F;
       --text:#2F4156; --muted:#5E7482;
@@ -74,6 +73,13 @@
     .form-control:focus,.form-select:focus{background-color:var(--field);color:var(--text);border-color:var(--teal);box-shadow:0 0 0 .22rem rgba(86,124,141,.25)}
     .form-select option{color:#2F4156}
     .form-select-sm{border-radius:10px}
+    /* Add-a-course form spacing (works even if Bootstrap fails to load) */
+    #courseForm .row{display:grid;grid-template-columns:2fr 1.2fr 1fr auto;gap:16px;align-items:end;--bs-gutter-x:0;--bs-gutter-y:0;margin:0}
+    #courseForm .row>*{width:auto;max-width:none;padding:0;margin:0}
+    #courseForm .form-label{display:block;margin-bottom:6px}
+    #courseForm .form-control{display:block;width:100%}
+    #courseForm .section-note{margin-top:16px}
+    @media (max-width:767px){#courseForm .row{grid-template-columns:1fr 1fr}#courseForm .row>*:first-child,#courseForm .row>*:last-child{grid-column:1/-1}}
     .btn-accent{background:var(--accent);color:#2F4156;border:0;border-radius:12px;font-weight:600;padding:10px 18px}
     .btn-accent:hover{filter:brightness(.95);color:#2F4156}
 
