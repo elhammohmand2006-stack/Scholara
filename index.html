@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholara - Home</title>
+    <link rel="icon" type="image/svg+xml" href="images/scholara-icon.svg">
+
+    <!-- choose the theme before the page shows (no flash): saved choice, or the device setting -->
+    <script>
+        (function () {
+            var saved = localStorage.getItem('theme');
+            var deviceDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (saved === 'dark' || (!saved && deviceDark)) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+            }
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/home.css">
+</head>
+<body>
+    <!-- top bar (only small screens) -->
+    <div class="topbar">
+        <button id="menu-btn" aria-label="Open menu"><i class="ri-menu-line"></i></button>
+        <img src="images/scholara-icon.svg" alt="Scholara">
+        <span style="width:26px"></span>
+    </div>
+
+    <!-- sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <button class="sidebar-close" id="sidebar-close" aria-label="Close menu"><i class="ri-close-line"></i></button>
+
+        <a href="index.html" class="sidebar-logo">
+            <img src="images/scholara-logo-light.svg" alt="Scholara" class="logo-light">
+            <img src="images/scholara-logo-dark.svg" alt="Scholara" class="logo-dark">
+        </a>
+
+        <p class="side-label">MENU</p>
+        <nav class="side-nav">
+                <a href="index.html" class="side-link active" aria-current="page"><i class="ri-home-4-line"></i>Home</a>
+                <a href="pages/tasks.html" class="side-link"><i class="ri-checkbox-circle-line"></i>Tasks</a>
+                <a href="pages/timer.html" class="side-link"><i class="ri-timer-line"></i>Timer</a>
+                <a href="pages/grades.html" class="side-link"><i class="ri-calculator-line"></i>Grades</a>
+                <a href="pages/notes.html" class="side-link"><i class="ri-sticky-note-line"></i>Notes</a>
+        </nav>
+
+        <div class="side-bottom">
+            <div class="theme-row">
+                <span class="theme-label">Theme</span>
+                <button class="theme-switch" id="theme-btn" role="switch" aria-checked="false" aria-label="Dark mode">
+                    <i class="ri-sun-line sun"></i>
+                    <i class="ri-moon-line moon"></i>
+                    <span class="thumb"></span>
+                </button>
+    </aside>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="main">
+        <main class="content">
+
+        </main>
+
+        <!-- footer -->
+        <footer class="footer">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="images/scholara-logo-dark.svg" alt="Scholara">
+                    <p>A calm place for students to plan tasks, focus, track grades and keep notes.</p>
+                </div>
+                <div>
+                    <h4>Pages</h4>
+                    <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="pages/tasks.html">Tasks</a></li>
+                    <li><a href="pages/timer.html">Timer</a></li>
+                    <li><a href="pages/grades.html">Grades</a></li>
+                    <li><a href="pages/notes.html">Notes</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Team</h4>
+                    <ul>
+                    <li>Member 1 - Home</li>
+                    <li>Member 2 - Tasks</li>
+                    <li>Member 3 - Timer</li>
+                    <li>Member 4 - Grades</li>
+                    <li>Member 5 - Notes</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Project</h4>
+                    <ul>
+                        <li><a href="#">GitHub repository</a></li>
+                        <li><a href="#">README</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="#" aria-label="GitHub"><i class="ri-github-line"></i></a>
+                        <a href="#" aria-label="Email"><i class="ri-mail-line"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">&copy; 2026 Scholara. Built by our JavaScript class group.</div>
+        </footer>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/home.js"></script>
+</body>
+</html>
